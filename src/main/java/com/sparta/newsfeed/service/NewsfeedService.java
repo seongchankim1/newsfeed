@@ -2,6 +2,7 @@ package com.sparta.newsfeed.service;
 
 import java.util.List;
 
+import com.sparta.newsfeed.entity.Newsfeed;
 import org.springframework.stereotype.Service;
 
 import com.sparta.newsfeed.dto.NewsfeedRequestDto;
@@ -18,8 +19,19 @@ public class NewsfeedService {
 	}
 
 	public NewsfeedResponseDto createNewsfeed(NewsfeedRequestDto requestDto) {
-		return null;
+
+		Newsfeed newsfeed = new Newsfeed();
+		newsfeed.setTitle(requestDto.getTitle());
+		newsfeed.setContent(requestDto.getContent());
+
+		Newsfeed savedNewsfeed = newsfeedRepository.save(newsfeed);
+		NewsfeedResponseDto responseDto = new NewsfeedResponseDto(savedNewsfeed);
+		return responseDto;
 	}
+
+
+
+
 
 	public NewsfeedResponseDto getNewsfeed(Long id) {
 		return null;
