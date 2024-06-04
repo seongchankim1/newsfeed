@@ -14,6 +14,7 @@ import java.util.Optional;
 public class UserService {
 	private final UserRepository userRepository;
 
+
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -24,7 +25,7 @@ public class UserService {
 		String password = requestDto.getPassword();
 		String email = requestDto.getEmail();
 		String introduce = requestDto.getIntroduce();
-		String status = requestDto.getStatus();
+		String status = "정상";
 
 		Optional<User> checkUsername = userRepository.findByUsername(username);
 		if (checkUsername.isPresent()) {

@@ -1,6 +1,8 @@
 package com.sparta.newsfeed.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,7 +25,10 @@ public class User {
 	@Column(nullable = false)
 	private String password;
 
+	@Email
+	@NotBlank
 	private String email;
+
 	private String introduce;
 	private String status;
 	private Timestamp created;
