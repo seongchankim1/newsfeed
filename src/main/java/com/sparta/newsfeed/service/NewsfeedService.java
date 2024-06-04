@@ -48,7 +48,12 @@ public class NewsfeedService {
 		return null;
 	}
 
+
 	public String deleteNewsfeed(Long id) {
-		return null;
+		if (!newsfeedRepository.existsById(id)) {
+			throw new IllegalArgumentException("삭제할 뉴스피드가 없습니다. id=" + id);
+		}
+		newsfeedRepository.deleteById(id);
+		return "뉴스피드가 삭제되었습니다. id=" + id;
 	}
 }
