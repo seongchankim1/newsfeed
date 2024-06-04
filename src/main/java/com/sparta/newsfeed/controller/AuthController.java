@@ -1,12 +1,17 @@
 package com.sparta.newsfeed.controller;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sparta.newsfeed.dto.LoginRequestDto;
+import com.sparta.newsfeed.entity.UserRoleEnum;
 import com.sparta.newsfeed.jwt.JwtUtil;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -19,13 +24,18 @@ public class AuthController {
 		this.jwtUtil = jwtUtil;
 	}
 
-	@PostMapping
-	public String createAccessToken(@RequestBody LoginRequestDto requestDto) {
-		return jwtUtil.createAccessToken(requestDto);
+	@PostMapping("/access")
+	public String createAccessToken(String username, UserRoleEnum role) {
+		return jwtUtil.createAccessToken(username, role);
 	}
 
-	@PostMapping
-	public String createRefreshToken(@RequestBody LoginRequestDto requestDto) {
-		return jwtUtil.createRefreshToken(requestDto);
+	@PostMapping("/refresh")
+	public String createRefreshToken(String username, UserRoleEnum role) {
+		return jwtUtil.createRefreshToken(username, role);
+	}
+
+	@GetMapping("/validate")
+	public Boolean validateAccessToken(HttpServletRequest request) {
+		return jwtUtil.validateAccessToken(jwtUtil.getJwtFromHeader(request));
 	}
 }
