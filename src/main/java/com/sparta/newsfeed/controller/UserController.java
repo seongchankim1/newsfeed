@@ -1,5 +1,6 @@
 package com.sparta.newsfeed.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +25,7 @@ public class UserController {
 
 	// 회원가입
 	@PostMapping("/signup")
-	public ResponseEntity<String> signup(@RequestBody SignupRequestDto requestDto) {
+	public ResponseEntity<String> signup(@RequestBody @Valid SignupRequestDto requestDto) {
 		userService.signup(requestDto);
 		return ResponseEntity.ok("회원가입 완료!");
 	}
@@ -32,7 +33,8 @@ public class UserController {
 	// 로그인
 	@GetMapping("/login")
 	public ResponseEntity<String> login(@RequestBody LoginRequestDto requestDto) {
-		String token = userService.login(requestDto);
+		// String token = userService.login(requestDto);
+		userService.login(requestDto);
 		return ResponseEntity.ok("로그인 완료!");
 	}
 }
