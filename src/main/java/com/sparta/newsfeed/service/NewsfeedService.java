@@ -44,10 +44,18 @@ public class NewsfeedService {
 				.collect(Collectors.toList());
 	}
 
-	public NewsfeedResponseDto updateNewsfeed(Long id, NewsfeedRequestDto requestDto) {
-		return null;
-	}
 
+	public NewsfeedResponseDto updateNewsfeed(Long id, NewsfeedRequestDto requestDto) {
+		Newsfeed newsfeed = newsfeedRepository.findById(id)
+				.orElseThrow(() -> new IllegalArgumentException("뉴스피드를 찾을 수 없습니다. id=" + id));
+
+		newsfeed.setTitle(requestDto.getTitle());
+		newsfeed.setContent(requestDto.getContent());
+
+		Newsfeed updatedNewsfeed = newsfeedRepository.save(newsfeed);
+
+		return new NewsfeedResponseDto(updatedNewsfeed);
+	}
 
 	public String deleteNewsfeed(Long id) {
 		if (!newsfeedRepository.existsById(id)) {
