@@ -1,6 +1,7 @@
 package com.sparta.newsfeed.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.sparta.newsfeed.entity.Newsfeed;
 import org.springframework.stereotype.Service;
@@ -29,16 +30,18 @@ public class NewsfeedService {
 		return responseDto;
 	}
 
-
-
-
-
 	public NewsfeedResponseDto getNewsfeed(Long id) {
-		return null;
+		Newsfeed newsfeed = newsfeedRepository.findById(id)
+				.orElseThrow(() -> new IllegalArgumentException("조회된 뉴스피드가 없습니다. id=" + id));
+		return new NewsfeedResponseDto(newsfeed);
 	}
 
 	public List<NewsfeedResponseDto> getAllNewsfeeds() {
-		return null;
+		List<Newsfeed> newsfeedList = newsfeedRepository.findAll();
+
+		return newsfeedList.stream()
+				.map(NewsfeedResponseDto::new)
+				.collect(Collectors.toList());
 	}
 
 	public NewsfeedResponseDto updateNewsfeed(Long id, NewsfeedRequestDto requestDto) {
