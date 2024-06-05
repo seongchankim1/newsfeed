@@ -9,6 +9,3 @@ public class NewsfeedRequestDto {
         private String title;
         private String content;
 }
-
-
-
