@@ -35,3 +35,11 @@ public abstract class Timestamped {
 
 
 }
+	@Temporal(TemporalType.TIMESTAMP)
+	private LocalDateTime createDateTime;
+
+	@LastModifiedDate
+	@Column(name = "last_modified_date_time")
+	private LocalDateTime lastModifiedDateTime;
+	}
+
