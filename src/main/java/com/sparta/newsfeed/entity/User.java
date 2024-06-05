@@ -17,22 +17,22 @@ public class User {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Long id;  // ID
 
 	@Column(nullable = false, unique = true)
-	private String username;
+	private String username;  // 사용자 ID
 
 	@Column(nullable = false)
-	private String password;
+	private String password;  // 비밀번호
 
 	@Email
 	@NotBlank
-	private String email;
+	private String email;  // 이메일
 
-	private String introduce;
-	private String status;
-	private Timestamp created;
-	private Timestamp updated;
+	private String introduce;  // 한 줄 소개
+	private String status;     // 회원상태코드
+	private Timestamp created; // 생성일자
+	private Timestamp updated; // 수정일자
 
 
 
