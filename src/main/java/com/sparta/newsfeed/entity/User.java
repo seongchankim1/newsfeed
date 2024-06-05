@@ -6,14 +6,13 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.sql.Timestamp;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @Table
-public class User {
+public class User extends Timestamped {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,21 +28,29 @@ public class User {
 	@NotBlank
 	private String email;  // 이메일
 
+	@Column(nullable = false)
 	private String introduce;  // 한 줄 소개
-	private String status;     // 회원상태코드
-	private Timestamp created; // 생성일자
-	private Timestamp updated; // 수정일자
+
+	@Column(nullable = false)
+	private String user_status;     // 회원상태코드
+
+	@Column(nullable = false)
+	private String refreshToken;
 
 
 
-	public User(String username, String password , String email, String introduce, String status) {
+	public User(String username, String password , String email, String introduce, String user_status, String refreshToken) {
 
 		this.username = username;
 		this.password = password;
 		this.email = email;
 		this.introduce = introduce;
-		this.status = status;
-		this.created = new Timestamp(System.currentTimeMillis());
-		this.updated = new Timestamp(System.currentTimeMillis());
+		this.user_status = user_status;
+		this.refreshToken = refreshToken;
+	}
+
+	public void updateStatus(String user_status) {
+		this.user_status = user_status;
+		updateStatusChanged();
 	}
 }

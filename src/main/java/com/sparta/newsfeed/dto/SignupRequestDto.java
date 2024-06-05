@@ -18,7 +18,9 @@ public class SignupRequestDto {
 
     private String email;
     private String introduce;
-    private String status;
+    private String status = "정상";
+    private String refreshToken;
     private Timestamp created;
     private Timestamp updated;
+    private Timestamp changed;
 }
