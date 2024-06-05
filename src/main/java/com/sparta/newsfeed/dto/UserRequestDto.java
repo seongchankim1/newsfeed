@@ -4,11 +4,10 @@ import lombok.Getter;
 
 @Getter
 
-public class ProfileRequestDto {
-    private Long id;
-    private String name;
+public class UserRequestDto {
     private String nickname;
     private String password;
     private String email;
-    private String mention;
+    private String introduce;
+
 }
