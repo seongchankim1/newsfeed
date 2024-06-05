@@ -3,8 +3,6 @@ package com.sparta.newsfeed.service;
 import com.sparta.newsfeed.dto.ProfileRequestDto;
 import com.sparta.newsfeed.dto.ProfileResponseDto;
 import com.sparta.newsfeed.entity.Profile;
-import com.sparta.newsfeed.entity.User;
-import com.sparta.newsfeed.repository.ProfileRepository;
 import com.sparta.newsfeed.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +14,6 @@ import java.util.List;
 
 public class ProfileService {
 
-    private final ProfileRepository profileRepository;
     private final UserRepository userRepository;
 
 // 프로필을 조회하는 코드
