@@ -1,19 +1,12 @@
 package com.sparta.newsfeed.controller;
 
+import com.sparta.newsfeed.dto.*;
+import com.sparta.newsfeed.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.sparta.newsfeed.dto.LoginRequestDto;
-import com.sparta.newsfeed.dto.SignupRequestDto;
-import com.sparta.newsfeed.service.UserService;
-
-@Controller
+@RestController
 @RequestMapping("/api/user")
 public class UserController {
 
@@ -36,5 +29,18 @@ public class UserController {
 		// String token = userService.login(requestDto);
 		userService.login(requestDto);
 		return ResponseEntity.ok("로그인 완료!");
+	}
+
+	@GetMapping("/{username}/profile") //조회기능 구현위치
+	public ResponseEntity<UserResponseDto> getProfiles(
+			@PathVariable String username) {
+		return ResponseEntity.ok().body(userService.findUser(username));
+	}
+
+	@PutMapping("/{username}/profile")//수정기능 구현위치
+	public ResponseEntity<UserUpdateResponseDto> updateProfiles(
+			@PathVariable String username,
+			@RequestBody UserUpdateRequestDto requestDto) {
+		return ResponseEntity.ok().body(userService.profileUpdate(username, requestDto));
 	}
 }
