@@ -31,6 +31,12 @@ public class NewsfeedController {
 		return newsfeedService.createNewsfeed(requestDto);
 	}
 
+	//뉴스피드 10건씩 페이지별 조회 (R)
+	@PostMapping("/{page}")
+	public List<NewsfeedResponseDto> getNewsfeeds(@PathVariable Long page) {
+		return newsfeedService.getNewsfeeds(page);
+	}
+
 	// 뉴스피드 단건 조회 (R)
 	@GetMapping("/{id}")
 	public NewsfeedResponseDto selectNewsfeed(@PathVariable Long id) {
