@@ -16,6 +16,6 @@ public class UserResponseDto {
         this.nickname = user.getNickname();
         this.email = user.getEmail();
         this.introduce = user.getIntroduce();
-        this.createAt = user.getCreated().toLocalDateTime();
+        this.createAt = user.getLastModifiedDateTime();
     }
 }

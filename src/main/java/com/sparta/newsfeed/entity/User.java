@@ -8,6 +8,8 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
@@ -16,7 +18,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @Table
-public class User {
+public class User extends Timestamped {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,9 +36,6 @@ public class User {
 	private String introduce;  // 한 줄 소개
 	private String status;     // 회원상태코드
 
-	private Timestamp created; // 생성일자
-	private Timestamp updated; // 수정일자
-
 	public User(String username, String password , String nickname, String email, String introduce) {
 
 		this.username = username;
@@ -45,8 +44,7 @@ public class User {
 		this.email = email;
 		this.introduce = introduce;
 		this.status = status;
-		this.created = new Timestamp(System.currentTimeMillis());
-		this.updated = new Timestamp(System.currentTimeMillis());
+
 	}
 
 	public void userProfile(SignupRequestDto requestDto) {
@@ -61,5 +59,6 @@ public class User {
 		this.email = email;
 		this.introduce = introduce;
 		this.password = password;
-		}
+		LocalDateTime lastModifiedDateTime = this.getLastModifiedDateTime();
+	}
 }

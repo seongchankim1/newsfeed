@@ -13,7 +13,7 @@ public class UserUpdateResponseDto {
     private String email;
     private String introduce;
     private String password;
-    private LocalDateTime createAt;
+    private LocalDateTime modfiledData;
 
     public UserUpdateResponseDto(User user) {
 
@@ -21,6 +21,6 @@ public class UserUpdateResponseDto {
         this.email = user.getEmail();
         this.password = user.getPassword();
         this.introduce = user.getIntroduce();
-        this.createAt = user.getCreated().toLocalDateTime();
+        this.modfiledData = user.getLastModifiedDateTime();
     }
 }
