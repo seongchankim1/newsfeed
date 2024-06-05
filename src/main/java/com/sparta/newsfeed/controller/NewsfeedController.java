@@ -16,7 +16,7 @@ import com.sparta.newsfeed.dto.NewsfeedRequestDto;
 import com.sparta.newsfeed.service.NewsfeedService;
 
 @RestController
-@RequestMapping("/api/newsfeeds")
+@RequestMapping("/api/newsfeed")
 public class NewsfeedController {
 
 	private final NewsfeedService newsfeedService;
@@ -39,7 +39,7 @@ public class NewsfeedController {
 
 	// 뉴스피드 전체 조회 (R)
 	@GetMapping("/all")
-	public List<NewsfeedResponseDto> getAllNewsfeeds() {
+	public List<NewsfeedResponseDto> getAllNewsfeed() {
 		return newsfeedService.getAllNewsfeeds();
 	}
 
