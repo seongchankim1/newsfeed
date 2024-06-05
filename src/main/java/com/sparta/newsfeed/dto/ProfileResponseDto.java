@@ -5,8 +5,8 @@ import com.sparta.newsfeed.entity.Profile;
 import java.time.LocalDateTime;
 
 public class ProfileResponseDto {
-    private Long id;
-    private String name;
+//    private Long id;
+//    private String name;
     private String nickname;
 //    private String password;
     private String email;
@@ -14,8 +14,8 @@ public class ProfileResponseDto {
     private LocalDateTime createAt;
 
     public ProfileResponseDto(Profile profile) {
-        this.id = profile.getId();
-        this.name = profile.getName();
+//        this.id = profile.getId();
+//        this.name = profile.getName();
         this.nickname = profile.getNickname();
 //        this.password = profile.getPassword();
         this.email = profile.getEmail();
