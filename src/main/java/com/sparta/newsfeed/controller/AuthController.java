@@ -25,13 +25,13 @@ public class AuthController {
 	}
 
 	@PostMapping("/access")
-	public String createAccessToken(String username, UserRoleEnum role) {
-		return jwtUtil.createAccessToken(username, role);
+	public String createAccessToken(String username) {
+		return jwtUtil.createAccessToken(username);
 	}
 
 	@PostMapping("/refresh")
-	public String createRefreshToken(String username, UserRoleEnum role) {
-		return jwtUtil.createRefreshToken(username, role);
+	public String createRefreshToken(String username) {
+		return jwtUtil.createRefreshToken(username);
 	}
 
 	@GetMapping("/validate")
