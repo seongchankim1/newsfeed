@@ -4,6 +4,8 @@ import com.sparta.newsfeed.dto.*;
 import com.sparta.newsfeed.service.UserService;
 import com.sparta.newsfeed.entity.User;
 import com.sparta.newsfeed.repository.UserRepository;
+
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -15,11 +17,9 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
 	private final UserService userService;
-	private final UserRepository userRepository;
 
-	public UserController(UserService userService, UserRepository userRepository) {
+	public UserController(UserService userService) {
 		this.userService = userService;
-		this.userRepository = userRepository;
 	}
 
 	// 회원가입
@@ -38,10 +38,9 @@ public class UserController {
 
 	// 로그인
 	@GetMapping("/login")
-	public ResponseEntity<String> login(@RequestBody LoginRequestDto requestDto) {
+	public ResponseEntity<String> login(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
 		// String token = userService.login(requestDto);
-		userService.login(requestDto);
-		return ResponseEntity.ok("로그인 완료!");
+		return ResponseEntity.ok(userService.login(requestDto, response));
 	}
 
 	@GetMapping("/{username}/profile") //조회기능 구현위치
@@ -50,7 +49,7 @@ public class UserController {
 		return ResponseEntity.ok().body(userService.findUser(username));
 	}
 
-	@PutMapping("/{username}/profile")//수정기능 구현위치
+	@DeleteMapping("/{username}/profile")//수정기능 구현위치
 	public ResponseEntity<UserUpdateResponseDto> updateProfiles(
 			@PathVariable String username,
 			@RequestBody UserUpdateRequestDto requestDto) {

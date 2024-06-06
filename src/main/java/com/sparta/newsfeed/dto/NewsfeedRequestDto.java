@@ -8,4 +8,9 @@ import lombok.Setter;
 public class NewsfeedRequestDto {
         private String title;
         private String content;
+
+        public NewsfeedRequestDto(String title, String content) {
+                this.title = title;
+                this.content = content;
+        }
 }

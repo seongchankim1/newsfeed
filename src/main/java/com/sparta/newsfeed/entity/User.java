@@ -12,6 +12,8 @@ import lombok.Setter;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -41,9 +43,11 @@ public class User extends Timestamped {
 	@Column(nullable = false)
 	private String user_status;     // 회원상태코드
 
-	@Column(nullable = false)
+	@Column
 	private String refreshToken;
 
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Newsfeed> newsfeedList = new ArrayList<>();
 
 
 	public User(String username, String password , String nickname, String email, String introduce, String user_status, String refreshToken) {

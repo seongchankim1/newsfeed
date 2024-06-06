@@ -6,4 +6,5 @@ import com.sparta.newsfeed.entity.Newsfeed;
 
 public interface NewsfeedRepository extends JpaRepository<Newsfeed, Long> {
 
+	Newsfeed findByUsername(String username);
 }
