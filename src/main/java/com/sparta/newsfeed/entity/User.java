@@ -29,22 +29,37 @@ public class User extends Timestamped {
 
 	@Column(nullable = false)
 	private String password;  // 비밀번호
+
 	@Email
 	@NotBlank
 	private String email;  // 이메일
 	private String nickname; //별칭, 별명
-	private String introduce;  // 한 줄 소개
-	private String status;     // 회원상태코드
 
-	public User(String username, String password , String nickname, String email, String introduce) {
+	@Column(nullable = false)
+	private String introduce;  // 한 줄 소개
+
+	@Column(nullable = false)
+	private String user_status;     // 회원상태코드
+
+	@Column(nullable = false)
+	private String refreshToken;
+
+
+
+	public User(String username, String password , String nickname, String email, String introduce, String user_status, String refreshToken) {
 
 		this.username = username;
 		this.password = password;
 		this.nickname = nickname;
 		this.email = email;
 		this.introduce = introduce;
-		this.status = status;
+		this.user_status = user_status;
+		this.refreshToken = refreshToken;
+	}
 
+	public void updateStatus(String user_status) {
+		this.user_status = user_status;
+		updateStatusChanged();
 	}
 
 	public void userProfile(SignupRequestDto requestDto) {
@@ -54,11 +69,12 @@ public class User extends Timestamped {
 		this.introduce = requestDto.getIntroduce();
 	}
 
-	public void update(String nickname, String email, String introduce,String password ) {
+	public void update(String nickname, String email, String introduce,String password) {
 		this.nickname = nickname;
 		this.email = email;
 		this.introduce = introduce;
 		this.password = password;
-		LocalDateTime lastModifiedDateTime = this.getLastModifiedDateTime();
+		updateProfileChanged();
+		// LocalDateTime lastModifiedDateTime = this.getLastModifiedDateTime();
 	}
 }

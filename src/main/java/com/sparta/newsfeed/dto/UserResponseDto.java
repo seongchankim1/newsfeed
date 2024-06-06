@@ -9,13 +9,13 @@ public class UserResponseDto {
     private String nickname;
     private String email;
     private String introduce;
-    private LocalDateTime createAt;
+    // private LocalDateTime createAt;
 
     public UserResponseDto(User user) {
 
         this.nickname = user.getNickname();
         this.email = user.getEmail();
         this.introduce = user.getIntroduce();
-        this.createAt = user.getLastModifiedDateTime();
+        // this.createAt = user.getLastModifiedDateTime();
     }
 }
