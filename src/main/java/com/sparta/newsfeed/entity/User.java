@@ -29,6 +29,7 @@ public class User extends Timestamped {
 
 	@Column(nullable = false)
 	private String password;  // 비밀번호
+
 	@Email
 	@NotBlank
 	private String email;  // 이메일
@@ -45,8 +46,7 @@ public class User extends Timestamped {
 
 
 
-	public User(String username, String password , String email, String introduce, String user_status, String refreshToken) {
-	public User(String username, String password , String nickname, String email, String introduce) {
+	public User(String username, String password , String nickname, String email, String introduce, String user_status, String refreshToken) {
 
 		this.username = username;
 		this.password = password;
@@ -60,8 +60,6 @@ public class User extends Timestamped {
 	public void updateStatus(String user_status) {
 		this.user_status = user_status;
 		updateStatusChanged();
-		this.status = status;
-
 	}
 
 	public void userProfile(SignupRequestDto requestDto) {
@@ -71,11 +69,12 @@ public class User extends Timestamped {
 		this.introduce = requestDto.getIntroduce();
 	}
 
-	public void update(String nickname, String email, String introduce,String password ) {
+	public void update(String nickname, String email, String introduce,String password) {
 		this.nickname = nickname;
 		this.email = email;
 		this.introduce = introduce;
 		this.password = password;
-		LocalDateTime lastModifiedDateTime = this.getLastModifiedDateTime();
+		updateProfileChanged();
+		// LocalDateTime lastModifiedDateTime = this.getLastModifiedDateTime();
 	}
 }

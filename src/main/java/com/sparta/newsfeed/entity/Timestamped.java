@@ -33,13 +33,14 @@ public abstract class Timestamped {
 		this.update_date = LocalDateTime.now();
 	}
 
-
+//	private LocalDateTime createDateTime;
+//
+//	@LastModifiedDate
+//	@Column(name = "last_modified_date_time")
+//	private LocalDateTime lastModifiedDateTime;
 }
-	@Temporal(TemporalType.TIMESTAMP)
-	private LocalDateTime createDateTime;
 
-	@LastModifiedDate
-	@Column(name = "last_modified_date_time")
-	private LocalDateTime lastModifiedDateTime;
-	}
+
+
+
 
