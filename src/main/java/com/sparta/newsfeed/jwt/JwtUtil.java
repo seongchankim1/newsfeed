@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.sparta.newsfeed.entity.User;
-import com.sparta.newsfeed.entity.UserRoleEnum;
 import com.sparta.newsfeed.repository.UserRepository;
 
 import io.jsonwebtoken.Claims;

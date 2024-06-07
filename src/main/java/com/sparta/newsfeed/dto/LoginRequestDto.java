@@ -1,6 +1,6 @@
 package com.sparta.newsfeed.dto;
 
-import com.sparta.newsfeed.entity.UserRoleEnum;
+// import com.sparta.newsfeed.entity.UserRoleEnum;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,5 +10,5 @@ import lombok.Setter;
 public class LoginRequestDto {
 	private String username;
 	private String password;
-	private UserRoleEnum role = UserRoleEnum.USER;
+	// private UserRoleEnum role = UserRoleEnum.USER;
 }

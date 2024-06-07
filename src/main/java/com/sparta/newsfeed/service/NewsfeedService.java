@@ -1,6 +1,7 @@
 package com.sparta.newsfeed.service;
 import com.sparta.newsfeed.dto.NewsfeedRequestDto;
 import com.sparta.newsfeed.dto.NewsfeedResponseDto;
+import com.sparta.newsfeed.dto.PagingRequestDto;
 import com.sparta.newsfeed.entity.Newsfeed;
 import com.sparta.newsfeed.entity.User;
 import com.sparta.newsfeed.jwt.JwtUtil;
@@ -8,8 +9,12 @@ import com.sparta.newsfeed.repository.NewsfeedRepository;
 import com.sparta.newsfeed.repository.UserRepository;
 
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -74,5 +79,35 @@ public class NewsfeedService {
         }
         newsfeedRepository.delete(newsfeed);
         return id + "번 뉴스피드가 삭제되었습니다.";
+    }
+
+    public List<NewsfeedResponseDto> getNewsfeeds(Long page, PagingRequestDto requestDto) {
+        Stream<Newsfeed> newsfeedStream;
+        // 기간, 정렬 방식 설정
+        LocalDateTime startDate = requestDto.getStartDate();
+        LocalDateTime endDate = requestDto.getEndDate();
+        String sortBy = requestDto.getSortBy();
+        // 기간별 검색, 아닐 시 전체 조회
+        if (startDate != null && endDate != null) {
+            newsfeedStream = newsfeedRepository.findAllByWriteDateBetween(startDate, endDate).stream();
+        } else {
+            newsfeedStream = newsfeedRepository.findAll().stream();
+        }
+        // null 값 시 최신 순
+        if (sortBy == null) {
+            sortBy = "writeDate";
+        }
+        // likes 시 좋아요순, 아닐 시 최신 순
+        if (sortBy.equals("likes")) {
+            newsfeedStream = newsfeedStream.sorted(Comparator.comparing(Newsfeed::getLikes).reversed());
+        } else {
+            newsfeedStream = newsfeedStream.sorted(Comparator.comparing(Newsfeed::getWriteDate).reversed());
+        }
+        // 페이지 별 10개씩 나누는 작업
+        return newsfeedStream
+            .skip((page - 1) * 10L)
+            .limit(10)
+            .map(NewsfeedResponseDto::new)
+            .toList();
     }
 }
