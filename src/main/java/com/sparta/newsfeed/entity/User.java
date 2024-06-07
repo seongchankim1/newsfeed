@@ -55,8 +55,11 @@ public class User extends Timestamped {
 	@Column
 	private String authKey;
 
+	@Column
+	private LocalDateTime verifyTime;
 
-	public User(String username, String password , String nickname, String email, String introduce, String user_status, String refreshToken, String authKey) {
+
+	public User(String username, String password , String nickname, String email, String introduce, String user_status, String refreshToken, String authKey, LocalDateTime verifyTime) {
 
 		this.username = username;
 		this.password = password;
@@ -66,6 +69,7 @@ public class User extends Timestamped {
 		this.user_status = user_status;
 		this.refreshToken = refreshToken;
 		this.authKey = authKey;
+		this.verifyTime = verifyTime;
 	}
 
 	public void updateStatus(String user_status) {

@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,6 +45,7 @@ public class UserService {
 		String authKey = authKeyBuilder();
 		user.setAuthKey(authKey);
 		// 여기에 authKey 를 이메일로 발송하는 메서드 추가
+		user.setVerifyTime(LocalDateTime.now().plusMinutes(3));
 
 		userRepository.findByUsername(user.getUsername())
 			.ifPresent(existingUser -> {
@@ -150,7 +152,7 @@ public class UserService {
 		System.out.println(authKey);
 		return authKey;
 	}
-
+	@Transactional
 	public String verifyMail(VerifyRequestDto requestDto) {
 		User user = userRepository.findByUsername(requestDto.getUsername()).orElseThrow(() -> new IllegalArgumentException("일치하는 아이디가 없습니다."));
 		if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
@@ -160,7 +162,12 @@ public class UserService {
 			throw new IllegalArgumentException("인증번호가 일치하지 않습니다.");
 		}
 		user.setUser_status("정상");
+		if (LocalDateTime.now().isAfter(user.getVerifyTime())) {
+			throw new IllegalArgumentException("인증 시간이 초과되었습니다.");
+		}
 		userRepository.save(user);
+
+
 		return "인증 완료!";
 	}
 }
