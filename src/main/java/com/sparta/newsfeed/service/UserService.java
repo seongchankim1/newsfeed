@@ -9,8 +9,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 // @RequiredArgsConstructor
@@ -60,9 +62,9 @@ public class UserService {
 			if (!passwordEncoder.matches(password, user.getPassword())) {
 				throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
 			}
-			String accessToken = jwtUtil.createAccessToken(username);
+			String accessToken = jwtUtil.createAccessToken(username, password);
 			response.addHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
-			String refreshToken = jwtUtil.createRefreshToken(username);
+			String refreshToken = jwtUtil.createRefreshToken(username, password);
 			user.setRefreshToken(refreshToken);
 			userRepository.save(user);
 			return "로그인 성공! 토큰 : " + refreshToken;
@@ -72,16 +74,18 @@ public class UserService {
 	}
 
 	// 회원 탈퇴
-	public void withdraw(Long id, SignupRequestDto requestDto) {
-		User user = userRepository.findById(id).orElseThrow(
+	public void withdraw(HttpServletResponse response, HttpServletRequest request) {
+		String token = jwtUtil.refreshToken(response, request);
+		token = jwtUtil.substringToken(token);
+		String username = jwtUtil.getUserInfoFromToken(token).getSubject();
+		User user = userRepository.findByUsername(username).orElseThrow(
 			() -> new IllegalArgumentException("등록된 사용자가 없습니다.")
 		);
 
 		if (user.getUser_status().equals("탈퇴")) {
 			throw new IllegalArgumentException("이미 탈퇴한 사용자입니다.");
 		}
-
-		String password = requestDto.getPassword();
+		String password = jwtUtil.getUserInfoFromToken(token).getAudience();
 		if (!passwordEncoder.matches(password, user.getPassword())) {
 			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
 		}
@@ -101,24 +105,28 @@ public class UserService {
 
 	//  프로필 update 코드
 	@Transactional
-	public UserUpdateResponseDto profileUpdate(String username, UserUpdateRequestDto requestDto) {
+	public UserUpdateResponseDto profileUpdate(UserUpdateRequestDto requestDto, HttpServletResponse response, HttpServletRequest request) {
+		String token = jwtUtil.refreshToken(response, request);
+		token = jwtUtil.substringToken(token);
+		String username = jwtUtil.getUserInfoFromToken(token).getSubject();
 		User user = userRepository.findByUsername(username).orElseThrow(()
 			-> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
-		if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
+		String password = jwtUtil.getUserInfoFromToken(token).getAudience();
+		if (!passwordEncoder.matches(password, user.getPassword())) {
 			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
 		}
 
-		String password = requestDto.getPassword();
+		password = requestDto.getPassword();
 		String newPassword = passwordEncoder.encode(password);
 		user.setPassword(newPassword);
 		userRepository.save(user);
-
+		user.updateUpdateDate();
 		user.update(
 			requestDto.getNickname(),
 			requestDto.getEmail(),
 			requestDto.getIntroduce(),
-			requestDto.getPassword()
+			user.getPassword()
 		);
 		if (passwordEncoder.matches(newPassword, user.getPassword())) {
 			throw new IllegalArgumentException("동일한 비밀번호는 사용하실 수 없습니다");

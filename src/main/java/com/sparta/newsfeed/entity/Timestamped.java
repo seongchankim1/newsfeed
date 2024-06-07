@@ -20,7 +20,8 @@ public abstract class Timestamped {
 	@Column(updatable = false)
 	private LocalDateTime write_date;    // 생성일자
 
-
+	@LastModifiedDate
+	@Column
 	private LocalDateTime update_date;    // 수정일자
 
 	private LocalDateTime status_changed;    // 상태변경시간
@@ -30,6 +31,10 @@ public abstract class Timestamped {
 	}
 
 	public void updateProfileChanged() {
+		this.update_date = LocalDateTime.now();
+	}
+
+	public void updateUpdateDate() {
 		this.update_date = LocalDateTime.now();
 	}
 

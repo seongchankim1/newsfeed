@@ -11,9 +11,12 @@ import lombok.Setter;
 
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.cglib.core.Local;
 
 @Entity
 @Getter
@@ -79,6 +82,6 @@ public class User extends Timestamped {
 		this.introduce = introduce;
 		this.password = password;
 		updateProfileChanged();
-		// LocalDateTime lastModifiedDateTime = this.getLastModifiedDateTime();
 	}
+
 }

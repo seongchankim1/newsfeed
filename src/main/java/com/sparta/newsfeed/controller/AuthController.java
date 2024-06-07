@@ -20,12 +20,12 @@ public class AuthController {
 	}
 
 	@PostMapping("/access-token")
-	public String createAccessToken(@RequestBody String username) {
-		return jwtUtil.createAccessToken(username);
+	public String createAccessToken(@RequestBody String username, String password) {
+		return jwtUtil.createAccessToken(username, password);
 	}
 
 	@PostMapping("/refresh-token")
-	public String createRefreshToken(@RequestBody String username) {
-		return jwtUtil.createRefreshToken(username);
+	public String createRefreshToken(@RequestBody String username, String password) {
+		return jwtUtil.createRefreshToken(username, password);
 	}
 }
