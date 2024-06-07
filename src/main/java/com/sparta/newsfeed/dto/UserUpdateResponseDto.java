@@ -1,5 +1,6 @@
 package com.sparta.newsfeed.dto;
 
+import java.sql.Timestamp;
 import com.sparta.newsfeed.entity.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +14,8 @@ public class UserUpdateResponseDto {
     private String email;
     private String introduce;
     private String password;
-    private LocalDateTime modfiledData;
+    // private LocalDateTime modfiledData;
+
 
     public UserUpdateResponseDto(User user) {
 
@@ -21,6 +23,6 @@ public class UserUpdateResponseDto {
         this.email = user.getEmail();
         this.password = user.getPassword();
         this.introduce = user.getIntroduce();
-        this.modfiledData = user.getLastModifiedDateTime();
+        //this.modfiledData = user.getLastModifiedDateTime();
     }
 }

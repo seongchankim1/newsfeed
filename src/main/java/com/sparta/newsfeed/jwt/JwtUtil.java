@@ -4,105 +4,159 @@ import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.sparta.newsfeed.dto.LoginRequestDto;
+import com.sparta.newsfeed.entity.User;
+import com.sparta.newsfeed.entity.UserRoleEnum;
+import com.sparta.newsfeed.repository.UserRepository;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
-import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.extern.slf4j.Slf4j;
+import jakarta.servlet.http.HttpServletResponse;
 
-@Slf4j(topic = "JwtUtil")
 @Component
 public class JwtUtil {
-	// Header KEY 값
 	public static final String AUTHORIZATION_HEADER = "Authorization";
-	// 사용자 권한 값의 KEY
 	public static final String AUTHORIZATION_KEY = "auth";
-	// Token 식별자
 	public static final String BEARER_PREFIX = "Bearer ";
-	// Access 토큰 만료시간
-	private final long ACCESS_TOKEN_TIME = 30 * 60 * 1000L; // 30분
-	// Refresh 토큰 만료시간
-	private final long REFRESH_TOKEN_TIME = 14 * 24 * 60 * 60 * 1000L; // 2주
+	private final long ACCESS_TIME = 60 * 60 * 1000L; // 60분
+	private final long REFRESH_TIME = 30 * 24 * 60 * 60 * 1000L; // 30일
+	private final UserRepository userRepository;
 
-	@Value("${jwt.secret.key}") // Base64 Encode 한 SecretKey
+	@Value("${jwt.secret.key}")
 	private String secretKey;
 	private Key key;
 	private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+
+	public static final Logger logger = LoggerFactory.getLogger("JWT 관련 로그");
+
+	public JwtUtil(UserRepository userRepository) {
+		this.userRepository = userRepository;
+	}
 
 	@PostConstruct
 	public void init() {
 		byte[] bytes = Base64.getDecoder().decode(secretKey);
 		key = Keys.hmacShaKeyFor(bytes);
 	}
-
-	// 토큰 생성
-	public String createAccessToken(LoginRequestDto requestDto) {
+	// Access토큰과 RefreshToken을 만료시간 설정을 위해 따로 생성함.
+	public String createAccessToken(String username) {
 		Date date = new Date();
 
-		return BEARER_PREFIX +
-			Jwts.builder()
-				.setSubject(requestDto.getUsername()) // 사용자 식별자값(ID)
-				.claim(AUTHORIZATION_KEY, requestDto.getRole()) // 사용자 권한
-				.setExpiration(new Date(date.getTime() + ACCESS_TOKEN_TIME)) // 만료 시간
-				.setIssuedAt(date) // 발급일
-				.signWith(key, signatureAlgorithm) // 암호화 알고리즘
-				.compact();
+		return BEARER_PREFIX + Jwts.builder()
+			.setSubject(username)
+			.setExpiration(new Date(date.getTime() + ACCESS_TIME))
+			.setIssuedAt(date)
+			.signWith(key, signatureAlgorithm)
+			.compact();
 	}
 
-	// 토큰 생성
-	public String createRefreshToken(LoginRequestDto requestDto) {
+	public String createRefreshToken(String username) {
 		Date date = new Date();
 
-		return BEARER_PREFIX +
-			Jwts.builder()
-				.setSubject(requestDto.getUsername()) // 사용자 식별자값(ID)
-				.claim(AUTHORIZATION_KEY, requestDto.getRole()) // 사용자 권한
-				.setExpiration(new Date(date.getTime() + ACCESS_TOKEN_TIME)) // 만료 시간
-				.setIssuedAt(date) // 발급일
-				.signWith(key, signatureAlgorithm) // 암호화 알고리즘
-				.compact();
+		return BEARER_PREFIX + Jwts.builder()
+			.setSubject(username)
+			.setExpiration(new Date(date.getTime() + REFRESH_TIME))
+			.setIssuedAt(date)
+			.signWith(key, signatureAlgorithm)
+			.compact();
 	}
 
-	// header 에서 JWT 가져오기
-	public String getJwtFromHeader(HttpServletRequest request) {
-		String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
-			return bearerToken.substring(7);
+	// 쿠키 키능은 Postman에서 크게 쓸모 없어서 제외해둠.
+	// public void addJwtToCookie(String token, HttpServletResponse res) {
+	// 	try {
+	// 		token = URLEncoder.encode(token, "utf-8").replaceAll("\\+", "%20");
+	//
+	// 		Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token);
+	// 		cookie.setPath("/");
+	//
+	// 		res.addCookie(cookie);
+	// 	} catch (UnsupportedEncodingException e) {
+	// 		logger.error(e.getMessage());
+	// 	}
+	// }
+
+	public String substringToken(String tokenValue) {
+		if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
+			return tokenValue.substring(7);
 		}
-		return null;
+		logger.error("토큰이 없습니다.");
+		throw new NullPointerException("토큰이 없습니다.");
 	}
 
-	// 토큰 검증
-	public boolean validateToken(String token) {
+	// 토큰 유효성 검사
+	// 만료 시에는 refreshToken 할 예정이라 true 처리.
+	public boolean validateAccessToken(String token) {
 		try {
 			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
 			return true;
-		} catch (SecurityException | MalformedJwtException | SignatureException e) {
-			log.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
 		} catch (ExpiredJwtException e) {
-			log.error("Expired JWT token, 만료된 JWT token 입니다.");
-		} catch (UnsupportedJwtException e) {
-			log.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
-		} catch (IllegalArgumentException e) {
-			log.error("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
+			logger.info("Access 토큰 만료: " + e.getMessage());
+			return true;
+		} catch (Exception e) {
+			logger.error("Access 토큰 검증 실패: " + e.getMessage());
+			return false;
 		}
-		return false;
 	}
 
-	// 토큰에서 사용자 정보 가져오기
+	public boolean validateRefreshToken(String token) {
+		try {
+			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+			return true;
+		} catch (ExpiredJwtException e) {
+			logger.error("Refresh 토큰 만료: " + e.getMessage());
+			return false;
+		} catch (Exception e) {
+			logger.error("Refresh 토큰 검증 실패: " + e.getMessage());
+			return false;
+		}
+	}
+
+	// Access 토큰이 만료되었을 때 Refresh 토큰이 살아있다면 Access 토큰을 새로 발급. 그 후 새로운 Access 토큰 return.
+	public String refreshToken(HttpServletResponse response, HttpServletRequest request) {
+		String token = request.getHeader(AUTHORIZATION_HEADER);
+		String subToken = substringToken(token);
+		String username = getUserInfoFromToken(subToken).getSubject();
+		token = getRefreshToken(username);
+		String newAccessToken = createAccessToken(username);
+		response.addHeader(AUTHORIZATION_HEADER, newAccessToken);
+		System.out.println("AccessToken Refresh 완료!" + newAccessToken);
+		return newAccessToken;
+	}
+
+	// Refresh 토큰을 get. Access 토큰의 아이디와 저장된 Refresh 토큰의 아이디가 다르다면 예외처리, Refresh 토큰이 Expired 되었다면 다시 로그인 메세지 출력.
+	public String getRefreshToken(String username) {
+		User user = userRepository.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("아이디가 존재하지 않습니다."));
+		String refreshToken = user.getRefreshToken();
+		String token = substringToken(refreshToken);
+		if (!getUserInfoFromToken(token).getSubject().equals(user.getUsername())) {
+			throw new IllegalArgumentException("아이디가 일치하지 않습니다.");
+		}
+		if (!validateRefreshToken(token)) {
+			throw new IllegalArgumentException("유효하지 않은 Refresh 토큰입니다. 다시 로그인 해주세요.");
+		}
+		return token;
+	}
+
+	// 토큰에서 Info를 Claims형식으로 받아옴. Expired 되었어도 정보만 받아오면 되기에 e.getClaims() 처리함.
 	public Claims getUserInfoFromToken(String token) {
-		return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+		token = token.replace(BEARER_PREFIX, "");
+		try {
+			// 기존 토큰 유효성 검사 로직
+			return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+		} catch (ExpiredJwtException e) {
+			return e.getClaims();
+		} catch (Exception e) {
+			throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+		}
 	}
 }
