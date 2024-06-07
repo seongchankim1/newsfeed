@@ -38,7 +38,7 @@ public class NewsfeedController {
 	}
 
 	// 뉴스피드 전체 조회 (R)
-	@GetMapping("/all")
+	@GetMapping
 	public List<NewsfeedResponseDto> getAllNewsfeed() {
 		return newsfeedService.getAllNewsfeeds();
 	}
