@@ -1,6 +1,7 @@
 package com.sparta.newsfeed.controller;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sparta.newsfeed.dto.NewsfeedResponseDto;
 import com.sparta.newsfeed.dto.NewsfeedRequestDto;
+import com.sparta.newsfeed.dto.PagingRequestDto;
 import com.sparta.newsfeed.service.NewsfeedService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,9 +40,10 @@ public class NewsfeedController {
 
 	//뉴스피드 10건씩 페이지별 조회 (R)
 	@GetMapping("/page/{page}")
-	public List<NewsfeedResponseDto> getNewsfeeds(@PathVariable Long page, @RequestBody(required = false) LocalDateTime startDate,	@RequestBody(required = false) LocalDateTime endDate, @RequestBody(required = false) String sortBy) {
-		return newsfeedService.getNewsfeeds(page, startDate, endDate, sortBy);
+	public List<NewsfeedResponseDto> getNewsfeeds(@PathVariable Long page, @RequestBody PagingRequestDto requestDto) {
+		return newsfeedService.getNewsfeeds(page, requestDto);
 	}
+
 
 	// 뉴스피드 단건 조회 (R)
 	@GetMapping("/{id}")
