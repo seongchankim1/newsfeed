@@ -8,8 +8,12 @@ import com.sparta.newsfeed.repository.NewsfeedRepository;
 import com.sparta.newsfeed.repository.UserRepository;
 
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -74,5 +78,30 @@ public class NewsfeedService {
         }
         newsfeedRepository.delete(newsfeed);
         return id + "번 뉴스피드가 삭제되었습니다.";
+    }
+
+    public List<NewsfeedResponseDto> getNewsfeeds(Long page, LocalDateTime startDate, LocalDateTime endDate, String sortBy) {
+        Stream<Newsfeed> newsfeedStream;
+
+        // 기간별 검색
+        if (startDate != null && endDate != null) {
+            newsfeedStream = newsfeedRepository.findAllByWriteDateBetween(startDate, endDate).stream();
+        } else {
+            newsfeedStream = newsfeedRepository.findAll().stream();
+        }
+        if (sortBy == null) {
+            sortBy = "writeDate";
+        }
+        if (sortBy.equals("likes")) {
+            newsfeedStream = newsfeedStream.sorted(Comparator.comparing(Newsfeed::getLikes).reversed());
+        } else {
+            newsfeedStream = newsfeedStream.sorted(Comparator.comparing(Newsfeed::getWriteDate).reversed());
+        }
+
+        return newsfeedStream
+            .skip((page - 1) * 10L)
+            .limit(10)
+            .map(NewsfeedResponseDto::new)
+            .toList();
     }
 }

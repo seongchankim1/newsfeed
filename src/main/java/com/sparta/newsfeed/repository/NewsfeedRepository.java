@@ -11,7 +11,7 @@ import com.sparta.newsfeed.entity.Newsfeed;
 public interface NewsfeedRepository extends JpaRepository<Newsfeed, Long> {
 
 	Newsfeed findByUsername(String username);
-	List<NewsfeedResponseDto> findAllByOrderByCreatedAtDesc();
 
-	List<Newsfeed> findAllByCreatedAtBetween(LocalDateTime startDate, LocalDateTime endDate);
+	List<Newsfeed> findAllByWriteDateBetween(LocalDateTime startDate, LocalDateTime endDate);
+
 }

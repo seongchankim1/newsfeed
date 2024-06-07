@@ -18,11 +18,11 @@ public abstract class Timestamped {
 
 	@CreatedDate
 	@Column(updatable = false)
-	private LocalDateTime write_date;    // 생성일자
+	private LocalDateTime writeDate;    // 생성일자
 
 	@LastModifiedDate
 	@Column
-	private LocalDateTime update_date;    // 수정일자
+	private LocalDateTime updateDate;    // 수정일자
 
 	private LocalDateTime status_changed;    // 상태변경시간
 
@@ -31,11 +31,11 @@ public abstract class Timestamped {
 	}
 
 	public void updateProfileChanged() {
-		this.update_date = LocalDateTime.now();
+		this.updateDate = LocalDateTime.now();
 	}
 
 	public void updateUpdateDate() {
-		this.update_date = LocalDateTime.now();
+		this.updateDate = LocalDateTime.now();
 	}
 
 //	private LocalDateTime createDateTime;
