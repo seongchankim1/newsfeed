@@ -133,6 +133,21 @@ public class UserService {
 		}
 		return new UserUpdateResponseDto(user);
 	}
+
+	public String authKey(String username) {
+		StringBuilder stringBuilder = new StringBuilder();
+		// 6자리 숫자 코드
+		stringBuilder.append((int)(Math.random()*10));
+		stringBuilder.append((int)(Math.random()*10));
+		stringBuilder.append((int)(Math.random()*10));
+		stringBuilder.append((int)(Math.random()*10));
+		stringBuilder.append((int)(Math.random()*10));
+		stringBuilder.append((int)(Math.random()*10));
+
+		String authKey = stringBuilder.toString();
+		System.out.println(authKey);
+		return authKey;
+	}
 }
 
 
