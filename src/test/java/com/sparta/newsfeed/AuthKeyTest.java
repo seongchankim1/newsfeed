@@ -15,7 +15,7 @@ public class AuthKeyTest {
 	@Test
 	public void test() {
 		String username = "hi";
-		userService.authKey(username);
+		userService.authKeyBuilder();
 
 	}
 }

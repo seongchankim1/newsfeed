@@ -52,8 +52,11 @@ public class User extends Timestamped {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Newsfeed> newsfeedList = new ArrayList<>();
 
+	@Column
+	private String authKey;
 
-	public User(String username, String password , String nickname, String email, String introduce, String user_status, String refreshToken) {
+
+	public User(String username, String password , String nickname, String email, String introduce, String user_status, String refreshToken, String authKey) {
 
 		this.username = username;
 		this.password = password;
@@ -62,6 +65,7 @@ public class User extends Timestamped {
 		this.introduce = introduce;
 		this.user_status = user_status;
 		this.refreshToken = refreshToken;
+		this.authKey = authKey;
 	}
 
 	public void updateStatus(String user_status) {

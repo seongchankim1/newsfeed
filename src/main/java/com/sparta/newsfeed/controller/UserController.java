@@ -27,7 +27,7 @@ public class UserController {
 	@PostMapping("/signup")
 	public ResponseEntity<String> signup(@RequestBody @Valid SignupRequestDto requestDto) {
 		userService.signup(requestDto);
-		return ResponseEntity.ok("회원가입 완료!");
+		return ResponseEntity.ok("회원가입 완료! 이메일 인증을 해주세요.");
 	}
 
 	// 회원탈퇴
@@ -54,5 +54,10 @@ public class UserController {
 	public ResponseEntity<UserUpdateResponseDto> updateProfiles(
 			@RequestBody UserUpdateRequestDto requestDto, HttpServletResponse response, HttpServletRequest request) {
 		return ResponseEntity.ok().body(userService.profileUpdate(requestDto, response, request));
+	}
+
+	@GetMapping("/verify")
+	public String verifyMail(@RequestBody VerifyRequestDto requestDto) {
+		return userService.verifyMail(requestDto);
 	}
 }

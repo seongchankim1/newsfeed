@@ -9,7 +9,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -42,6 +41,9 @@ public class UserService {
 		user.setUser_status(requestDto.getUser_status());
 
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		String authKey = authKeyBuilder();
+		user.setAuthKey(authKey);
+		// 여기에 authKey 를 이메일로 발송하는 메서드 추가
 
 		userRepository.findByUsername(user.getUsername())
 			.ifPresent(existingUser -> {
@@ -134,7 +136,7 @@ public class UserService {
 		return new UserUpdateResponseDto(user);
 	}
 
-	public String authKey(String username) {
+	public String authKeyBuilder() {
 		StringBuilder stringBuilder = new StringBuilder();
 		// 6자리 숫자 코드
 		stringBuilder.append((int)(Math.random()*10));
@@ -147,6 +149,19 @@ public class UserService {
 		String authKey = stringBuilder.toString();
 		System.out.println(authKey);
 		return authKey;
+	}
+
+	public String verifyMail(VerifyRequestDto requestDto) {
+		User user = userRepository.findByUsername(requestDto.getUsername()).orElseThrow(() -> new IllegalArgumentException("일치하는 아이디가 없습니다."));
+		if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
+			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+		}
+		if (!requestDto.getAuthKey().equals(user.getAuthKey())) {
+			throw new IllegalArgumentException("인증번호가 일치하지 않습니다.");
+		}
+		user.setUser_status("정상");
+		userRepository.save(user);
+		return "인증 완료!";
 	}
 }
 
