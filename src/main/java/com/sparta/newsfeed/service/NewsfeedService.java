@@ -33,9 +33,9 @@ public class NewsfeedService {
     }
 
     public NewsfeedResponseDto createNewsfeed(NewsfeedRequestDto requestDto, HttpServletResponse response, HttpServletRequest request) {
-        String token = jwtUtil.refreshToken(response, request);
-        token = jwtUtil.substringToken(token);
-        String username = jwtUtil.getUserInfoFromToken(token).getSubject();
+        String token = jwtUtil.resolveToken(request);
+        String newAccessToken = jwtUtil.refreshToken(token, response);
+        String username = jwtUtil.getUserInfoFromToken(newAccessToken).getSubject();
         User user = userRepository.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
         Newsfeed newsfeed = new Newsfeed(requestDto, user);
         newsfeed.setUser(user);
@@ -58,8 +58,10 @@ public class NewsfeedService {
 
     @Transactional
     public NewsfeedResponseDto updateNewsfeed(Long id, NewsfeedRequestDto requestDto, HttpServletResponse response, HttpServletRequest request) {
-        String token = jwtUtil.refreshToken(response, request);
-        String username = jwtUtil.getUserInfoFromToken(token).getSubject();
+        String token = jwtUtil.resolveToken(request);
+        String newAccessToken = jwtUtil.refreshToken(token, response);
+        String newBearerAccessToken = jwtUtil.substringToken(newAccessToken);
+        String username = jwtUtil.getUserInfoFromToken(newBearerAccessToken).getSubject();
         Newsfeed newsfeed = newsfeedRepository.findById(id).orElseThrow(()->new IllegalArgumentException("아이디를 찾을 수 없습니다."));
         if (!newsfeed.getUser().getUsername().equals(username)) {
             throw new IllegalArgumentException("자신의 글만 삭제할 수 있습니다.");
@@ -71,8 +73,10 @@ public class NewsfeedService {
     }
 
     public String deleteNewsfeed(Long id, HttpServletResponse response, HttpServletRequest request) {
-        String token = jwtUtil.refreshToken(response, request);
-        String username = jwtUtil.getUserInfoFromToken(token).getSubject();
+        String token = jwtUtil.resolveToken(request);
+        String newAccessToken = jwtUtil.refreshToken(token, response);
+        String newBearerAccessToken = jwtUtil.substringToken(newAccessToken);
+        String username = jwtUtil.getUserInfoFromToken(newBearerAccessToken).getSubject();
         Newsfeed newsfeed = newsfeedRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("삭제할 뉴스피드가 없습니다."));
         if (!newsfeed.getUser().getUsername().equals(username)) {
             throw new IllegalArgumentException("자신의 뉴스피드만 삭제할 수 있습니다.");

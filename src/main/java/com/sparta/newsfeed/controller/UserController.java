@@ -27,13 +27,13 @@ public class UserController {
 	@PostMapping("/signup")
 	public ResponseEntity<String> signup(@RequestBody @Valid SignupRequestDto requestDto) {
 		userService.signup(requestDto);
-		return ResponseEntity.ok("회원가입 완료!");
+		return ResponseEntity.ok("회원가입 완료! 이메일 인증을 해주세요.");
 	}
 
 	// 회원탈퇴
 	@DeleteMapping("/withdraw")
-	public ResponseEntity<String> withdraw(HttpServletResponse response, HttpServletRequest request) {
-		userService.withdraw(response, request);
+	public ResponseEntity<String> withdraw(@RequestBody UserRequestDto requestDto,HttpServletResponse response, HttpServletRequest request) {
+		userService.withdraw(requestDto, response, request);
 		return ResponseEntity.ok("회원탈퇴 완료!");
 	}
 
@@ -54,5 +54,10 @@ public class UserController {
 	public ResponseEntity<UserUpdateResponseDto> updateProfiles(
 			@RequestBody UserUpdateRequestDto requestDto, HttpServletResponse response, HttpServletRequest request) {
 		return ResponseEntity.ok().body(userService.profileUpdate(requestDto, response, request));
+	}
+
+	@PostMapping("/verify")
+	public String verifyMail(@RequestBody VerifyRequestDto requestDto) {
+		return userService.verifyMail(requestDto);
 	}
 }
