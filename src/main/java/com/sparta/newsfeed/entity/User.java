@@ -58,6 +58,10 @@ public class User extends Timestamped {
 	@Column
 	private LocalDateTime verifyTime;
 
+	@Column
+	@Enumerated(value = EnumType.STRING)
+	private UserRoleEnum role;
+
 
 	public User(String username, String password , String nickname, String email, String introduce, String user_status, String refreshToken, String authKey, LocalDateTime verifyTime) {
 

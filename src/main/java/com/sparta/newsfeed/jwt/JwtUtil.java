@@ -7,6 +7,10 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -30,6 +34,7 @@ public class JwtUtil {
 	private final long ACCESS_TIME = 60 * 60 * 1000L; // 60분
 	private final long REFRESH_TIME = 30 * 24 * 60 * 60 * 1000L; // 30일
 	private final UserRepository userRepository;
+	private final UserDetailsService userDetailsService;
 
 	@Value("${jwt.secret.key}")
 	private String secretKey;
@@ -38,8 +43,9 @@ public class JwtUtil {
 
 	public static final Logger logger = LoggerFactory.getLogger("JWT 관련 로그");
 
-	public JwtUtil(UserRepository userRepository) {
+	public JwtUtil(UserRepository userRepository, UserDetailsService userDetailsService) {
 		this.userRepository = userRepository;
+		this.userDetailsService = userDetailsService;
 	}
 
 	@PostConstruct
@@ -96,7 +102,7 @@ public class JwtUtil {
 
 	// 토큰 유효성 검사
 	// 만료 시에는 refreshToken 할 예정이라 true 처리.
-	public boolean validateAccessToken(String token) {
+	public boolean validateToken(String token) {
 		try {
 			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
 			return true;
@@ -161,4 +167,19 @@ public class JwtUtil {
 			throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
 		}
 	}
+
+	public Authentication getAuthentication(String token) {
+		Claims claims = getUserInfoFromToken(token);
+		UserDetails userDetails = userDetailsService.loadUserByUsername(claims.getSubject());
+		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+	}
+
+	public String resolveToken(HttpServletRequest request) {
+		String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+			return bearerToken.substring(BEARER_PREFIX.length());
+		}
+		return null;
+	}
+
 }
