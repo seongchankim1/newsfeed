@@ -32,8 +32,8 @@ public class UserController {
 
 	// 회원탈퇴
 	@DeleteMapping("/withdraw")
-	public ResponseEntity<String> withdraw(HttpServletResponse response, HttpServletRequest request) {
-		userService.withdraw(response, request);
+	public ResponseEntity<String> withdraw(@RequestBody UserRequestDto requestDto,HttpServletResponse response, HttpServletRequest request) {
+		userService.withdraw(requestDto, response, request);
 		return ResponseEntity.ok("회원탈퇴 완료!");
 	}
 
@@ -56,7 +56,7 @@ public class UserController {
 		return ResponseEntity.ok().body(userService.profileUpdate(requestDto, response, request));
 	}
 
-	@GetMapping("/verify")
+	@PostMapping("/verify")
 	public String verifyMail(@RequestBody VerifyRequestDto requestDto) {
 		return userService.verifyMail(requestDto);
 	}

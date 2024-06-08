@@ -60,7 +60,7 @@ public class User extends Timestamped {
 
 	@Column
 	@Enumerated(value = EnumType.STRING)
-	private UserRoleEnum role;
+	private UserRoleEnum role = UserRoleEnum.USER;
 
 
 	public User(String username, String password , String nickname, String email, String introduce, String user_status, String refreshToken, String authKey, LocalDateTime verifyTime) {

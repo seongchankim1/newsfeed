@@ -24,10 +24,14 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
 		String token = jwtUtil.resolveToken(request);
+
 		if (token != null && jwtUtil.validateToken(token)) {
 			Authentication authentication = jwtUtil.getAuthentication(token);
 			SecurityContextHolder.getContext().setAuthentication(authentication);
+		} else {
+			System.out.println("토큰이 없습니다. 로그인 해주세요.");
 		}
+
 		chain.doFilter(request, response);
 	}
 }

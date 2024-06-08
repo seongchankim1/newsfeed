@@ -54,24 +54,22 @@ public class JwtUtil {
 		key = Keys.hmacShaKeyFor(bytes);
 	}
 	// Access토큰과 RefreshToken을 만료시간 설정을 위해 따로 생성함.
-	public String createAccessToken(String username, String password) {
+	public String createAccessToken(String username) {
 		Date date = new Date();
 
 		return BEARER_PREFIX + Jwts.builder()
 			.setSubject(username)
-			.setAudience(password)
 			.setExpiration(new Date(date.getTime() + ACCESS_TIME))
 			.setIssuedAt(date)
 			.signWith(key, signatureAlgorithm)
 			.compact();
 	}
 
-	public String createRefreshToken(String username, String password) {
+	public String createRefreshToken(String username) {
 		Date date = new Date();
 
 		return BEARER_PREFIX + Jwts.builder()
 			.setSubject(username)
-			.setAudience(password)
 			.setExpiration(new Date(date.getTime() + REFRESH_TIME))
 			.setIssuedAt(date)
 			.signWith(key, signatureAlgorithm)
@@ -129,13 +127,10 @@ public class JwtUtil {
 	}
 
 	// Access 토큰이 만료되었을 때 Refresh 토큰이 살아있다면 Access 토큰을 새로 발급. 그 후 새로운 Access 토큰 return.
-	public String refreshToken(HttpServletResponse response, HttpServletRequest request) {
-		String token = request.getHeader(AUTHORIZATION_HEADER);
-		String subToken = substringToken(token);
-		String username = getUserInfoFromToken(subToken).getSubject();
-		String password = getUserInfoFromToken(subToken).getAudience();
+	public String refreshToken(String token, HttpServletResponse response) {
+		String username = getUserInfoFromToken(token).getSubject();
 		token = getRefreshToken(username);
-		String newAccessToken = createAccessToken(username, password);
+		String newAccessToken = createAccessToken(username);
 		response.addHeader(AUTHORIZATION_HEADER, newAccessToken);
 		System.out.println("AccessToken Refresh 완료!" + newAccessToken);
 		return newAccessToken;

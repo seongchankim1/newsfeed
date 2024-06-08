@@ -66,9 +66,9 @@ public class UserService {
 			if (!passwordEncoder.matches(password, user.getPassword())) {
 				throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
 			}
-			String accessToken = jwtUtil.createAccessToken(username, password);
+			String accessToken = jwtUtil.createAccessToken(username);
 			response.addHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
-			String refreshToken = jwtUtil.createRefreshToken(username, password);
+			String refreshToken = jwtUtil.createRefreshToken(username);
 			user.setRefreshToken(refreshToken);
 			userRepository.save(user);
 			return "로그인 성공! 토큰 : " + refreshToken;
@@ -78,10 +78,11 @@ public class UserService {
 	}
 
 	// 회원 탈퇴
-	public void withdraw(HttpServletResponse response, HttpServletRequest request) {
-		String token = jwtUtil.refreshToken(response, request);
-		token = jwtUtil.substringToken(token);
-		String username = jwtUtil.getUserInfoFromToken(token).getSubject();
+	public void withdraw(UserRequestDto requestDto, HttpServletResponse response, HttpServletRequest request) {
+		String token = jwtUtil.resolveToken(request);
+		String newAccessToken = jwtUtil.refreshToken(token, response);
+		String newBearerAccessToken = jwtUtil.substringToken(newAccessToken);
+		String username = jwtUtil.getUserInfoFromToken(newBearerAccessToken).getSubject();
 		User user = userRepository.findByUsername(username).orElseThrow(
 			() -> new IllegalArgumentException("등록된 사용자가 없습니다.")
 		);
@@ -89,7 +90,7 @@ public class UserService {
 		if (user.getUser_status().equals("탈퇴")) {
 			throw new IllegalArgumentException("이미 탈퇴한 사용자입니다.");
 		}
-		String password = jwtUtil.getUserInfoFromToken(token).getAudience();
+		String password = requestDto.getPassword();
 		if (!passwordEncoder.matches(password, user.getPassword())) {
 			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
 		}
@@ -110,13 +111,14 @@ public class UserService {
 	//  프로필 update 코드
 	@Transactional
 	public UserUpdateResponseDto profileUpdate(UserUpdateRequestDto requestDto, HttpServletResponse response, HttpServletRequest request) {
-		String token = jwtUtil.refreshToken(response, request);
-		token = jwtUtil.substringToken(token);
-		String username = jwtUtil.getUserInfoFromToken(token).getSubject();
+		String token = jwtUtil.resolveToken(request);
+		String newAccessToken = jwtUtil.refreshToken(token, response);
+		String newBearerAccessToken = jwtUtil.substringToken(newAccessToken);
+		String username = jwtUtil.getUserInfoFromToken(newBearerAccessToken).getSubject();
 		User user = userRepository.findByUsername(username).orElseThrow(()
 			-> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
-		String password = jwtUtil.getUserInfoFromToken(token).getAudience();
+		String password = requestDto.getPassword();
 		if (!passwordEncoder.matches(password, user.getPassword())) {
 			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
 		}
