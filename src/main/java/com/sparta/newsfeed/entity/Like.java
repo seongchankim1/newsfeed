@@ -23,7 +23,6 @@ public class Like extends Timestamped{
     @ManyToOne
     @JoinColumn(name = "newsfeed_id", nullable = false)
     private Newsfeed newsfeed;
-
 //    @Column
 //    private Long ContentId;
 //

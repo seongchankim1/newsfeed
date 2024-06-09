@@ -17,13 +17,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.cglib.core.Local;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @Table
-public class User extends Timestamped {
+@EntityListeners(AuditingEntityListener.class)
+public class User{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,14 +48,24 @@ public class User extends Timestamped {
 	private String introduce;  // 한 줄 소개
 
 	@Column(nullable = false)
-	private String user_status;     // 회원상태코드
+	private String user_status = "정상";     // 회원상태코드
 
 	@Column
 	private String refreshToken;
 
+	@CreatedDate
+	@Column(updatable = false, nullable = false)
+	private LocalDateTime writeDate;
+
+	@LastModifiedDate
+	@Column(nullable = false)
+	private LocalDateTime updateDate;
+
+	@Column
+	private LocalDateTime statusChanged;
+
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Newsfeed> newsfeedList = new ArrayList<>();
-
 
 	public User(String username, String password , String nickname, String email, String introduce, String user_status, String refreshToken) {
 
@@ -84,4 +98,15 @@ public class User extends Timestamped {
 		updateProfileChanged();
 	}
 
+	public void updateStatusChanged() {
+		this.statusChanged = LocalDateTime.now();
+	}
+
+	public void updateProfileChanged() {
+		this.updateDate = LocalDateTime.now();
+	}
+
+	public void updateUpdateDate() {
+		this.updateDate = LocalDateTime.now();
+	}
 }
