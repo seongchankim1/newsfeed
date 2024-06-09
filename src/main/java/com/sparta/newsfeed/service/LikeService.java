@@ -39,14 +39,18 @@ public class LikeService {
 
         if(existLike.isPresent()) {
             likeRepository.delete(existLike.get());
+            newsfeed.likeUpdated();
             newsfeed.setLikes(newsfeed.getLikes() - 1);
         } else{
             Like like = new Like();
             like.setUser(user);
             like.setNewsfeed(newsfeed);
+            newsfeed.likeCreated();
+            newsfeed.likeUpdated();
             likeRepository.save(like);
             newsfeed.setLikes(newsfeed.getLikes() + 1);
         }
+
 
         Newsfeed savedNewsfeed = newsfeedRepository.save(newsfeed);
         return new NewsfeedResponseDto(savedNewsfeed);
