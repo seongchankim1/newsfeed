@@ -31,18 +31,6 @@ public abstract class Timestamped {
 
 	private LocalDateTime likeUpdated;   // 좋아요 수정일자
 
-	public void updateStatusChanged() {
-		this.status_changed = LocalDateTime.now();
-	}
-
-	public void updateProfileChanged() {
-		this.updateDate = LocalDateTime.now();
-	}
-
-	public void updateUpdateDate() {
-		this.updateDate = LocalDateTime.now();
-	}
-
 //	private LocalDateTime createDateTime;
 //
 //	@LastModifiedDate
