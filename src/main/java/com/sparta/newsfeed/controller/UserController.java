@@ -5,6 +5,7 @@ import com.sparta.newsfeed.service.UserService;
 import com.sparta.newsfeed.entity.User;
 import com.sparta.newsfeed.repository.UserRepository;
 
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -25,7 +26,7 @@ public class UserController {
 
 	// 회원가입
 	@PostMapping("/signup")
-	public ResponseEntity<String> signup(@RequestBody @Valid SignupRequestDto requestDto) {
+	public ResponseEntity<String> signup(@RequestBody @Valid SignupRequestDto requestDto) throws MessagingException {
 		userService.signup(requestDto);
 		return ResponseEntity.ok("회원가입 완료! 이메일 인증을 해주세요.");
 	}
