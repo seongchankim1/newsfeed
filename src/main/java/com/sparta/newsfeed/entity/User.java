@@ -11,9 +11,12 @@ import lombok.Setter;
 
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.cglib.core.Local;
 
 @Entity
 @Getter
@@ -49,8 +52,18 @@ public class User extends Timestamped {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Newsfeed> newsfeedList = new ArrayList<>();
 
+	@Column
+	private String authKey;
 
-	public User(String username, String password , String nickname, String email, String introduce, String user_status, String refreshToken) {
+	@Column
+	private LocalDateTime verifyTime;
+
+	@Column
+	@Enumerated(value = EnumType.STRING)
+	private UserRoleEnum role = UserRoleEnum.USER;
+
+
+	public User(String username, String password , String nickname, String email, String introduce, String user_status, String refreshToken, String authKey, LocalDateTime verifyTime) {
 
 		this.username = username;
 		this.password = password;
@@ -59,6 +72,8 @@ public class User extends Timestamped {
 		this.introduce = introduce;
 		this.user_status = user_status;
 		this.refreshToken = refreshToken;
+		this.authKey = authKey;
+		this.verifyTime = verifyTime;
 	}
 
 	public void updateStatus(String user_status) {
@@ -79,6 +94,6 @@ public class User extends Timestamped {
 		this.introduce = introduce;
 		this.password = password;
 		updateProfileChanged();
-		// LocalDateTime lastModifiedDateTime = this.getLastModifiedDateTime();
 	}
+
 }
