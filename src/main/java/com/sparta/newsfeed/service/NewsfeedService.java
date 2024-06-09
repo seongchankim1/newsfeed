@@ -65,7 +65,6 @@ public class NewsfeedService {
             throw new IllegalArgumentException("자신의 글만 삭제할 수 있습니다.");
         }
         User user = userRepository.findById(newsfeed.getUser().getId()).orElseThrow(()-> new IllegalArgumentException("아이디를 찾을 수 없습니다."));
-        newsfeed.updateUpdateDate();
         newsfeed.update(requestDto, user);
         return new NewsfeedResponseDto(newsfeed);
     }
