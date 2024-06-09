@@ -8,6 +8,7 @@ import lombok.Getter;
 
 public class UserRequestDto {
     private String nickname;
+    private String name;
     private String password;
     private String email;
     private String introduce;

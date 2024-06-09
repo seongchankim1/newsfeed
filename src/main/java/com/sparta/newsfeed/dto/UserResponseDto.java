@@ -6,13 +6,15 @@ import java.time.LocalDateTime;
 
 @Getter
 public class UserResponseDto {
-    private String nickname;
+    private String username;
+    private String name;
     private String email;
     private String introduce;
 
     public UserResponseDto(User user) {
 
-        this.nickname = user.getNickname();
+        this.username = user.getUsername();
+        this.name = user.getName();
         this.email = user.getEmail();
         this.introduce = user.getIntroduce();
     }

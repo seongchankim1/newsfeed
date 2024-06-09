@@ -13,6 +13,7 @@ import java.sql.Timestamp;
 @Setter
 public class UserUpdateRequestDto {
 
+    private String name;
     private String nickname;
     private String email;
     private String introduce;
