@@ -73,6 +73,22 @@ public class UserService {
 		}
 	}
 
+	// 로그아웃
+	public void logout(HttpServletRequest request) {
+		String token = request.getHeader(JwtUtil.AUTHORIZATION_HEADER);
+		if(token != null && token.startsWith(JwtUtil.BEARER_PREFIX)) {
+			token = jwtUtil.substringToken(token);
+			String username = jwtUtil.getUserInfoFromToken(token).getSubject();
+			User user = userRepository.findByUsername(username).orElseThrow(
+					() -> new IllegalArgumentException("등록된 사용자가 없습니다.")
+			);
+			user.setRefreshToken(null);
+			userRepository.save(user);
+		} else {
+			throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+		}
+	}
+
 	// 회원 탈퇴
 	public void withdraw(HttpServletResponse response, HttpServletRequest request) {
 		String token = jwtUtil.refreshToken(response, request);
