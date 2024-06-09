@@ -1,7 +1,6 @@
 package com.sparta.newsfeed.entity;
 
-import com.sparta.newsfeed.dto.SignupRequestDto;
-import com.sparta.newsfeed.dto.UserRequestDto;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -9,14 +8,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.cglib.core.Local;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -38,6 +34,9 @@ public class User{
 
 	@Column(nullable = false)
 	private String password;  // 비밀번호
+
+	@Column(nullable = false)
+	private String name;     // 이름
 
 	@Email
 	@NotBlank
@@ -67,10 +66,11 @@ public class User{
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Newsfeed> newsfeedList = new ArrayList<>();
 
-	public User(String username, String password , String nickname, String email, String introduce, String user_status, String refreshToken) {
+	public User(String username, String password , String name, String nickname, String email, String introduce, String user_status, String refreshToken) {
 
 		this.username = username;
 		this.password = password;
+		this.name = name;
 		this.nickname = nickname;
 		this.email = email;
 		this.introduce = introduce;
@@ -81,13 +81,6 @@ public class User{
 	public void updateStatus(String user_status) {
 		this.user_status = user_status;
 		updateStatusChanged();
-	}
-
-	public void userProfile(SignupRequestDto requestDto) {
-		this.username = requestDto.getUsername();
-		this.nickname = requestDto.getNickname();
-		this.email = requestDto.getEmail();
-		this.introduce = requestDto.getIntroduce();
 	}
 
 	public void update(String nickname, String email, String introduce,String password) {
