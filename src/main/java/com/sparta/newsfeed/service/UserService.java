@@ -59,6 +59,9 @@ public class UserService {
 		Optional<User> userOptional = userRepository.findByUsername(username);
 		if (userOptional.isPresent()) {
 			User user = userOptional.get();
+			if("탈퇴".equals(user.getUser_status())) {
+				throw new IllegalArgumentException("탈퇴한 사용자입니다.");
+			}
 			if (!passwordEncoder.matches(password, user.getPassword())) {
 				throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
 			}
@@ -71,6 +74,7 @@ public class UserService {
 		} else {
 			throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
 		}
+
 	}
 
 	// 로그아웃
@@ -104,8 +108,9 @@ public class UserService {
 		String password = jwtUtil.getUserInfoFromToken(token).getAudience();
 		if (!passwordEncoder.matches(password, user.getPassword())) {
 			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+		} else {
+			user.setRefreshToken(null);
 		}
-
 		user.updateStatus("탈퇴");
 		userRepository.save(user);
 	}
