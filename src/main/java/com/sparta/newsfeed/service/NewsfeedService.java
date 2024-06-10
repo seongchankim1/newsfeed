@@ -33,7 +33,9 @@ public class NewsfeedService {
         this.userRepository = userRepository;
     }
 
-    public NewsfeedResponseDto createNewsfeed(NewsfeedRequestDto requestDto, HttpServletResponse response, HttpServletRequest request) {
+    public NewsfeedResponseDto createNewsfeed(NewsfeedRequestDto requestDto,
+                                              HttpServletResponse response,
+                                              HttpServletRequest request) {
         String token = jwtUtil.resolveToken(request);
         String newAccessToken = jwtUtil.refreshToken(token, response);
         String username = jwtUtil.getUserInfoFromToken(newAccessToken).getSubject();
@@ -58,7 +60,10 @@ public class NewsfeedService {
     }
 
     @Transactional
-    public NewsfeedResponseDto updateNewsfeed(Long id, NewsfeedRequestDto requestDto, HttpServletResponse response, HttpServletRequest request) {
+    public NewsfeedResponseDto updateNewsfeed(Long id,
+                                              NewsfeedRequestDto requestDto,
+                                              HttpServletResponse response,
+                                              HttpServletRequest request) {
         String token = jwtUtil.resolveToken(request);
         String newAccessToken = jwtUtil.refreshToken(token, response);
         String newBearerAccessToken = jwtUtil.substringToken(newAccessToken);
