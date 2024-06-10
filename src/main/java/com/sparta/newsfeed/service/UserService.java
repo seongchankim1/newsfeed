@@ -17,7 +17,7 @@ import java.util.Optional;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
- //@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @Service
 public class UserService {
 	private final UserRepository userRepository;
@@ -35,6 +35,7 @@ public class UserService {
 	@Transactional
 	public UserResponseDto signup(SignupRequestDto requestDto) throws MessagingException {
 
+		// 새로운 사용자 등록
 		User user = new User();
 		user.setUsername(requestDto.getUsername());
 		user.setPassword(requestDto.getPassword());
@@ -44,20 +45,21 @@ public class UserService {
 		user.setRefreshToken(requestDto.getRefreshToken());
 		user.setUser_status(requestDto.getUser_status());
 
+		// 비밀번호 암호화
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
-		String authKey = authKeyBuilder();
+		String authKey = authKeyBuilder(); // 인증키 생성
 		user.setAuthKey(authKey);
 		emailService.sendVerificationEmail(user.getEmail(), authKey); // 이메일 발송 메서드 호출
-		user.setVerifyTime(LocalDateTime.now().plusMinutes(3));
+		user.setVerifyTime(LocalDateTime.now().plusMinutes(3)); // 인증 시간 설정
 
+		// 중복 사용자 확인 후 저장
 		userRepository.findByUsername(user.getUsername())
-				.ifPresent(existingUser -> {
-					throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
-				});
+			.ifPresent(existingUser -> {
+				throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
+			});
 		userRepository.save(user);
 		return new UserResponseDto(user);
 	}
-
 
 	// 로그인
 	public String login(LoginRequestDto requestDto, HttpServletResponse response) {
@@ -70,9 +72,12 @@ public class UserService {
 			if (!passwordEncoder.matches(password, user.getPassword())) {
 				throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
 			}
-			String accessToken = jwtUtil.createAccessToken(username);
+			if (user.getUser_status().equals("미인증")) {
+				throw new IllegalArgumentException("이메일 인증을 먼저 해주세요.");
+			}
+			String accessToken = jwtUtil.createAccessToken(username); // 액세스 토큰 생성
 			response.addHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
-			String refreshToken = jwtUtil.createRefreshToken(username);
+			String refreshToken = jwtUtil.createRefreshToken(username); // 리프레시 토큰 생성
 			user.setRefreshToken(refreshToken);
 			userRepository.save(user);
 			return "로그인 성공! 토큰 : " + refreshToken;
@@ -83,10 +88,10 @@ public class UserService {
 
 	// 회원 탈퇴
 	public void withdraw(UserRequestDto requestDto, HttpServletResponse response, HttpServletRequest request) {
-		String token = jwtUtil.resolveToken(request);
-		String newAccessToken = jwtUtil.refreshToken(token, response);
-		String newBearerAccessToken = jwtUtil.substringToken(newAccessToken);
-		String username = jwtUtil.getUserInfoFromToken(newBearerAccessToken).getSubject();
+		String token = jwtUtil.resolveToken(request); // 토큰 확인
+		String newAccessToken = jwtUtil.refreshToken(token, response); // 토큰 갱신
+		String newBearerAccessToken = jwtUtil.substringToken(newAccessToken); // 토큰 추출
+		String username = jwtUtil.getUserInfoFromToken(newBearerAccessToken).getSubject(); // 사용자 정보 추출
 		User user = userRepository.findByUsername(username).orElseThrow(
 			() -> new IllegalArgumentException("등록된 사용자가 없습니다.")
 		);
@@ -99,26 +104,24 @@ public class UserService {
 			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
 		}
 
-		user.updateStatus("탈퇴");
+		user.updateStatus("탈퇴"); // 사용자 상태 업데이트
 		userRepository.save(user);
 	}
 
-	//유저 프로필 조회
+	// 유저 프로필 조회
 	public UserResponseDto findUser(String username) {
 		User user = userRepository.findByUsername(username).orElseThrow(()
-			-> new IllegalArgumentException("해당 User가 존재하지않습니다."));
+			-> new IllegalArgumentException("해당 User가 존재하지 않습니다."));
 		return new UserResponseDto(user);
 	}
 
-	;
-
-	//  프로필 update 코드
+	// 프로필 업데이트
 	@Transactional
 	public UserUpdateResponseDto profileUpdate(UserUpdateRequestDto requestDto, HttpServletResponse response, HttpServletRequest request) {
-		String token = jwtUtil.resolveToken(request);
-		String newAccessToken = jwtUtil.refreshToken(token, response);
-		String newBearerAccessToken = jwtUtil.substringToken(newAccessToken);
-		String username = jwtUtil.getUserInfoFromToken(newBearerAccessToken).getSubject();
+		String token = jwtUtil.resolveToken(request); // 토큰 확인
+		String newAccessToken = jwtUtil.refreshToken(token, response); // 토큰 갱신
+		String newBearerAccessToken = jwtUtil.substringToken(newAccessToken); // 토큰 추출
+		String username = jwtUtil.getUserInfoFromToken(newBearerAccessToken).getSubject(); // 사용자 정보 추출
 		User user = userRepository.findByUsername(username).orElseThrow(()
 			-> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
@@ -144,8 +147,7 @@ public class UserService {
 		return new UserUpdateResponseDto(user);
 	}
 
-
-	//authKey 생성
+	// 인증키 생성
 	public String authKeyBuilder() {
 		StringBuilder stringBuilder = new StringBuilder();
 		// 6자리 숫자 코드
@@ -161,7 +163,7 @@ public class UserService {
 		return authKey;
 	}
 
-	//이메일 인증 시간 제한
+	// 이메일 인증 시간 제한
 	@Transactional
 	public String verifyMail(VerifyRequestDto requestDto) {
 		User user = userRepository.findByUsername(requestDto.getUsername()).orElseThrow(() -> new IllegalArgumentException("일치하는 아이디가 없습니다."));
@@ -176,10 +178,6 @@ public class UserService {
 			throw new IllegalArgumentException("인증 시간이 초과되었습니다.");
 		}
 		userRepository.save(user);
-
-
 		return "인증 완료!";
 	}
 }
-
-

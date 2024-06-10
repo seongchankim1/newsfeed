@@ -54,6 +54,7 @@ public class CommentService {
 
     @Transactional
     public CommentResponse updateComment(Long id,
+                                         Long newsfeedId,
                                          CommentUpdateRequest requestDto,
                                          HttpServletResponse response,
                                          HttpServletRequest request) {
@@ -62,7 +63,7 @@ public class CommentService {
         String newBearerAccessToken = jwtUtil.substringToken(newAccessToken);
         String username = jwtUtil.getUserInfoFromToken(newBearerAccessToken).getSubject();
 
-        Newsfeed newsfeed = newsfeedRepository.findById(id).orElseThrow(()
+        Newsfeed newsfeed = newsfeedRepository.findById(newsfeedId).orElseThrow(()
                 -> new IllegalArgumentException("입력하신 뉴스피드가 존재하지 않습니다."));
 
         Comment comment = commentRepository.findById(id).orElseThrow(()
@@ -71,6 +72,7 @@ public class CommentService {
         if (!comment.getUsername().equals(username)) {
             throw new IllegalArgumentException("자신의 댓글만 삭제할 수 있습니다.");
         }
+        comment.updateUpdateDate();
         comment.update(requestDto, newsfeed);
         return new CommentResponse(comment);
 
@@ -78,12 +80,14 @@ public class CommentService {
 
     @Transactional
     public String deleteComment(Long id,
+                                Long newsfeedId,
                                 HttpServletResponse response,
                                 HttpServletRequest request) {
         String token = jwtUtil.resolveToken(request);
         String newAccessToken = jwtUtil.refreshToken(token, response);
         String newBearerAccessToken = jwtUtil.substringToken(newAccessToken);
         String username = jwtUtil.getUserInfoFromToken(newBearerAccessToken).getSubject();
+        newsfeedRepository.findById(newsfeedId).orElseThrow(() -> new IllegalArgumentException("올바른 뉴스피드 번호를 입력해주세요."));
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("삭제할 댓글이 없습니다."));
         if (!comment.getUsername().equals(username)) {
             throw new IllegalArgumentException("자신의 댓글만 삭제할 수 있습니다.");

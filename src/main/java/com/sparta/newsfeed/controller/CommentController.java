@@ -34,18 +34,20 @@ public class CommentController {
     @PutMapping("/{id}")
     public ResponseEntity<CommentResponse> updateComment(
             @PathVariable Long id,
+            @PathVariable(value = "newsfeedId") Long newsfeedId,
             @RequestBody CommentUpdateRequest requestDto,
             HttpServletResponse response,
             HttpServletRequest request) {
-        return ResponseEntity.ok().body(commentService.updateComment(id, requestDto, response, request));
+        return ResponseEntity.ok().body(commentService.updateComment(id,newsfeedId, requestDto, response, request));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteComment(
             @PathVariable Long id,
+            @PathVariable(value = "newsfeedId") Long newsfeedId,
             HttpServletResponse response,
             HttpServletRequest request) {
-        commentService.deleteComment(id, response, request);
+        commentService.deleteComment(id,newsfeedId, response, request);
         return ResponseEntity.ok().body("성공적으로 댓글 삭제");
     }
 }

@@ -9,9 +9,11 @@ import lombok.Getter;
 public class CommentCreateRequest {
     private String comment;
     private String username;
+    private String nickname;
 
-    public CommentCreateRequest( String comment, String username) {
+    public CommentCreateRequest(String comment, String username, String nickname) {
         this.comment = comment;
         this.username = username;
+        this.nickname = nickname;
     }
 }
