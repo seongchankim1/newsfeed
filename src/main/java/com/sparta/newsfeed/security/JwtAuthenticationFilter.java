@@ -6,6 +6,7 @@ import com.sparta.newsfeed.dto.UserRequestDto;
 import com.sparta.newsfeed.entity.User;
 import com.sparta.newsfeed.jwt.JwtUtil;
 import com.sparta.newsfeed.repository.UserRepository;
+import com.sparta.newsfeed.service.UserService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -27,13 +28,15 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 
 	private final JwtUtil jwtUtil;
 	private final ObjectMapper objectMapper;
+	private final UserService userService;
 	private final UserRepository userRepository;
 
-	public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil, ObjectMapper objectMapper, UserRepository userRepository) {
+	public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil, ObjectMapper objectMapper, UserService userService, UserRepository userRepository) {
 		super(new AntPathRequestMatcher("/api/user/login"));
 		setAuthenticationManager(authenticationManager);
 		this.jwtUtil = jwtUtil;
 		this.objectMapper = objectMapper;
+		this.userService = userService;
 		this.userRepository = userRepository;
 	}
 
@@ -44,10 +47,7 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 		Map<String, String> requestBody = objectMapper.readValue(request.getInputStream(), Map.class);
 		String username = requestBody.get("username");
 		String password = requestBody.get("password");
-		User user = userRepository.findByUsername(username).orElseThrow(()-> new UsernameNotFoundException(username));
-		if (user.getUser_status().equals("미인증")) {
-			throw new IllegalArgumentException("이메일 인증을 먼저 해주세요.");
-		}
+		userService.login(username,password,response);
 		// 인증 토큰 생성
 		UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);
 		// AuthenticationManager 통해 인증 시도

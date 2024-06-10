@@ -63,9 +63,7 @@ public class UserService {
 	}
 
 	// 로그인
-	public String login(LoginRequestDto requestDto, HttpServletResponse response) {
-		String username = requestDto.getUsername();
-		String password = requestDto.getPassword();
+	public String login(String username, String password, HttpServletResponse response) {
 
 		Optional<User> userOptional = userRepository.findByUsername(username);
 		if (userOptional.isPresent()) {

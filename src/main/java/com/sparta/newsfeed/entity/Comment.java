@@ -27,7 +27,10 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username;  // 사용자 ID
+    @Column(nullable = false)
+    private String username; // 사용자 ID
+
+    @Column
     private String nickname; // 사용자별명
 
     @Column(nullable = false)
