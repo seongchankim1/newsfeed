@@ -19,11 +19,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/user")
 public class UserController {
 
-	private final UserService userService;
+    private final UserService userService;
 
-	public UserController(UserService userService) {
-		this.userService = userService;
-	}
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
 	// 회원가입
 	@PostMapping("/signup")
@@ -39,18 +39,18 @@ public class UserController {
 		return ResponseEntity.ok("회원탈퇴 완료!");
 	}
 
-	// 로그인
-	@GetMapping("/login")
-	public ResponseEntity<String> login(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
-		// String token = userService.login(requestDto);
-		return ResponseEntity.ok(userService.login(requestDto, response));
-	}
+    // 로그인
+    @GetMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
+        // String token = userService.login(requestDto);
+        return ResponseEntity.ok(userService.login(requestDto, response));
+    }
 
-	@GetMapping("/{username}/profile") //조회기능 구현위치
-	public ResponseEntity<UserResponseDto> getProfiles(
-			@PathVariable String username) {
-		return ResponseEntity.ok().body(userService.findUser(username));
-	}
+    @GetMapping("/{username}/profile") //조회기능 구현위치
+    public ResponseEntity<UserResponseDto> getProfiles(
+            @PathVariable String username) {
+        return ResponseEntity.ok().body(userService.findUser(username));
+    }
 
 	@PutMapping("/profile")//수정기능 구현위치
 	public ResponseEntity<UserUpdateResponseDto> updateProfiles(
