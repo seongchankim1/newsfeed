@@ -34,7 +34,9 @@ public class NewsfeedController {
 
 	//뉴스피드 생성 (C)
 	@PostMapping
-	public NewsfeedResponseDto createNewsfeed(@RequestBody NewsfeedRequestDto requestDto, HttpServletResponse response, HttpServletRequest request) {
+	public NewsfeedResponseDto createNewsfeed(@RequestBody NewsfeedRequestDto requestDto,
+											  HttpServletResponse response,
+											  HttpServletRequest request) {
 		return newsfeedService.createNewsfeed(requestDto, response, request);
 	}
 
@@ -59,13 +61,18 @@ public class NewsfeedController {
 
 	// 뉴스피드 수정 (U)
 	@PutMapping("/{id}")
-	public NewsfeedResponseDto updateNewsfeed(@PathVariable Long id, @RequestBody NewsfeedRequestDto requestDto, HttpServletResponse response, HttpServletRequest request) {
+	public NewsfeedResponseDto updateNewsfeed(@PathVariable Long id,
+											  @RequestBody NewsfeedRequestDto requestDto,
+											  HttpServletResponse response,
+											  HttpServletRequest request) {
 		return newsfeedService.updateNewsfeed(id,requestDto, response, request);
 	}
 
 	// 뉴스피드 삭제 (D)
 	@DeleteMapping("/{id}")
-	public String deleteNewsfeed(@PathVariable Long id, HttpServletResponse response, HttpServletRequest request) {
+	public String deleteNewsfeed(@PathVariable Long id,
+								 HttpServletResponse response,
+								 HttpServletRequest request) {
 		return newsfeedService.deleteNewsfeed(id, response, request);
 	}
 }

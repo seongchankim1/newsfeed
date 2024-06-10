@@ -6,11 +6,13 @@ import lombok.Setter;
 @Setter
 @Getter
 public class NewsfeedRequestDto {
+        private String username;
         private String title;
         private String content;
         private int like;
 
-        public NewsfeedRequestDto(String title, String content, int like) {
+        public NewsfeedRequestDto(String username,String title, String content, int like) {
+                this.username = username;
                 this.title = title;
                 this.content = content;
                 this.like = like;

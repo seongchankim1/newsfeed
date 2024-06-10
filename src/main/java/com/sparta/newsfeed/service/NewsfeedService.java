@@ -1,5 +1,4 @@
 package com.sparta.newsfeed.service;
-
 import com.sparta.newsfeed.dto.NewsfeedRequestDto;
 import com.sparta.newsfeed.dto.NewsfeedResponseDto;
 import com.sparta.newsfeed.dto.PagingRequestDto;
@@ -35,7 +34,9 @@ public class NewsfeedService {
 
     // 뉴스피드 생성
     @Transactional
-    public NewsfeedResponseDto createNewsfeed(NewsfeedRequestDto requestDto, HttpServletResponse response, HttpServletRequest request) {
+    public NewsfeedResponseDto createNewsfeed(NewsfeedRequestDto requestDto,
+                                              HttpServletResponse response,
+                                              HttpServletRequest request) {
         // 토큰 해석 및 갱신
         String token = jwtUtil.resolveToken(request);
         String newAccessToken = jwtUtil.refreshToken(token, response);
