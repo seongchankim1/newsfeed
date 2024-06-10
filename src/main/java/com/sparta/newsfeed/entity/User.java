@@ -52,6 +52,9 @@ public class User{
 	@Column
 	private String refreshToken;
 
+	@Column
+	private String accessToken;
+
 	@CreatedDate
 	@Column(updatable = false, nullable = false)
 	private LocalDateTime writeDate;
@@ -66,7 +69,7 @@ public class User{
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Newsfeed> newsfeedList = new ArrayList<>();
 
-	public User(String username, String password , String name, String nickname, String email, String introduce, String user_status, String refreshToken) {
+	public User(String username, String password , String name, String nickname, String email, String introduce, String user_status, String refreshToken, String accessToken) {
 
 		this.username = username;
 		this.password = password;
@@ -76,6 +79,7 @@ public class User{
 		this.introduce = introduce;
 		this.user_status = user_status;
 		this.refreshToken = refreshToken;
+		this.accessToken = accessToken;
 	}
 
 	public void updateStatus(String user_status) {

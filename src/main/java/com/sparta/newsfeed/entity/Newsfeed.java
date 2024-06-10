@@ -20,15 +20,20 @@ public class Newsfeed{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
 	@Column
 	private String title;
+
 	@Column
 	private String content;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
+
 	@Column
 	private String username;
+
 	@Column
 	private int likes;
 

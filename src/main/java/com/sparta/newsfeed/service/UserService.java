@@ -70,6 +70,7 @@ public class UserService {
 			response.addHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
 			String refreshToken = jwtUtil.createRefreshToken(username, password);
 			user.setRefreshToken(refreshToken);
+			user.setAccessToken(accessToken);
 			userRepository.save(user);
 			return "로그인 성공! 토큰 : " + refreshToken;
 		} else {
@@ -79,7 +80,7 @@ public class UserService {
 	}
 
 	// 로그아웃
-	public void logout(HttpServletRequest request) {
+	public String logout(HttpServletRequest request) {
 		String token = request.getHeader(JwtUtil.AUTHORIZATION_HEADER);
 		if(token != null && token.startsWith(JwtUtil.BEARER_PREFIX)) {
 			token = jwtUtil.substringToken(token);
@@ -88,7 +89,9 @@ public class UserService {
 					() -> new IllegalArgumentException("등록된 사용자가 없습니다.")
 			);
 			user.setRefreshToken(null);
+			user.setAccessToken(null);
 			userRepository.save(user);
+			return "로그아웃 성공! 토큰이 초기화되었습니다.";
 		} else {
 			throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
 		}
@@ -111,6 +114,7 @@ public class UserService {
 			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
 		} else {
 			user.setRefreshToken(null);
+			user.setAccessToken(null);
 		}
 		user.updateStatus("탈퇴");
 		userRepository.save(user);

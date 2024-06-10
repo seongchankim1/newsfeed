@@ -1,6 +1,6 @@
 package com.sparta.newsfeed.service;
 
-import com.sparta.newsfeed.dto.LikeRequestDto;
+// import com.sparta.newsfeed.dto.LikeRequestDto;
 import com.sparta.newsfeed.dto.NewsfeedResponseDto;
 import com.sparta.newsfeed.entity.Like;
 import com.sparta.newsfeed.entity.Newsfeed;
