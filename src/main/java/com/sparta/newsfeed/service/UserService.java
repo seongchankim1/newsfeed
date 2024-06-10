@@ -144,6 +144,7 @@ public class UserService {
 		return new UserUpdateResponseDto(user);
 	}
 
+
 	//authKey 생성
 	public String authKeyBuilder() {
 		StringBuilder stringBuilder = new StringBuilder();
