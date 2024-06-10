@@ -30,6 +30,13 @@ public abstract class Timestamped {
 	private LocalDateTime status_changed;    // 상태변경시간
 
 	private LocalDateTime likeUpdated;   // 좋아요 수정일자
+	public void updateProfileChanged() {
+		this.updateDate = LocalDateTime.now();
+	}
+
+	public void updateUpdateDate() {
+		this.updateDate = LocalDateTime.now();
+	}
 
 //	private LocalDateTime createDateTime;
 //

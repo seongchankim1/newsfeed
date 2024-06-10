@@ -5,6 +5,8 @@ import com.sparta.newsfeed.service.UserService;
 import com.sparta.newsfeed.entity.User;
 import com.sparta.newsfeed.repository.UserRepository;
 
+
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -17,32 +19,32 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/user")
 public class UserController {
 
-	private final UserService userService;
+    private final UserService userService;
 
-	public UserController(UserService userService) {
-		this.userService = userService;
-	}
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
 	// 회원가입
 	@PostMapping("/signup")
-	public ResponseEntity<String> signup(@RequestBody @Valid SignupRequestDto requestDto) {
+	public ResponseEntity<String> signup(@RequestBody @Valid SignupRequestDto requestDto) throws MessagingException {
 		userService.signup(requestDto);
-		return ResponseEntity.ok("회원가입 완료!");
+		return ResponseEntity.ok("회원가입 완료! 이메일 인증을 해주세요.");
 	}
 
 	// 회원탈퇴
 	@DeleteMapping("/withdraw")
-	public ResponseEntity<String> withdraw(HttpServletResponse response, HttpServletRequest request) {
-		userService.withdraw(response, request);
+	public ResponseEntity<String> withdraw(@RequestBody UserRequestDto requestDto,HttpServletResponse response, HttpServletRequest request) {
+		userService.withdraw(requestDto, response, request);
 		return ResponseEntity.ok("회원탈퇴 완료!");
 	}
 
-	// 로그인
-	@GetMapping("/login")
-	public ResponseEntity<String> login(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
-		// String token = userService.login(requestDto);
-		return ResponseEntity.ok(userService.login(requestDto, response));
-	}
+    // 로그인
+    @GetMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
+        // String token = userService.login(requestDto);
+        return ResponseEntity.ok(userService.login(requestDto, response));
+    }
 
 	// 로그아웃
 	@PostMapping("/logout")
@@ -50,15 +52,24 @@ public class UserController {
 		userService.logout(request);
 	}
 
+	// 유저 조회
 	@GetMapping("/{username}/profile") //조회기능 구현위치
 	public ResponseEntity<UserResponseDto> getProfiles(
 			@PathVariable String username) {
 		return ResponseEntity.ok().body(userService.findUser(username));
 	}
 
+	// 유저 수정
+	// @PutMapping("/profile")//수정기능 구현위치
 	@PutMapping("/{username}/profile")//수정기능 구현위치
 	public ResponseEntity<UserUpdateResponseDto> updateProfiles(
 			@RequestBody UserUpdateRequestDto requestDto, HttpServletResponse response, HttpServletRequest request) {
 		return ResponseEntity.ok().body(userService.profileUpdate(requestDto, response, request));
+	}
+
+	// 이메일 인증
+	@PostMapping("/verify")
+	public String verifyMail(@RequestBody VerifyRequestDto requestDto) {
+		return userService.verifyMail(requestDto);
 	}
 }

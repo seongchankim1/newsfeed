@@ -1,5 +1,6 @@
 package com.sparta.newsfeed.entity;
-
+import com.sparta.newsfeed.dto.SignupRequestDto;
+import com.sparta.newsfeed.dto.UserRequestDto;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -70,6 +71,24 @@ public class User{
 	private List<Newsfeed> newsfeedList = new ArrayList<>();
 
 	public User(String username, String password , String name, String nickname, String email, String introduce, String user_status, String refreshToken, String accessToken) {
+	@Column
+	private String authKey;
+
+	@Column
+	private LocalDateTime verifyTime;
+
+	@Column
+	@Enumerated(value = EnumType.STRING)
+	private UserRoleEnum role = UserRoleEnum.USER;
+
+	private LocalDateTime status_changed;    // 상태변경시간
+
+	public void updateStatusChanged() {
+		this.status_changed = LocalDateTime.now();
+	}
+
+
+	public User(String username, String password , String nickname, String email, String introduce, String user_status, String refreshToken, String authKey, LocalDateTime verifyTime) {
 
 		this.username = username;
 		this.password = password;
@@ -80,6 +99,8 @@ public class User{
 		this.user_status = user_status;
 		this.refreshToken = refreshToken;
 		this.accessToken = accessToken;
+		this.authKey = authKey;
+		this.verifyTime = verifyTime;
 	}
 
 	public void updateStatus(String user_status) {
@@ -106,4 +127,19 @@ public class User{
 	public void updateUpdateDate() {
 		this.updateDate = LocalDateTime.now();
 	}
+//
+//        public void userProfile(SignupRequestDto requestDto) {
+//            this.username = requestDto.getUsername();
+//            this.nickname = requestDto.getNickname();
+//            this.email = requestDto.getEmail();
+//            this.introduce = requestDto.getIntroduce();
+//        }
+//
+//        public void update(String nickname, String email, String introduce,String password) {
+//            this.nickname = nickname;
+//            this.email = email;
+//            this.introduce = introduce;
+//            this.password = password;
+//            updateProfileChanged();
+//        }
 }

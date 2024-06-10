@@ -19,7 +19,7 @@ public class SignupRequestDto {
     private String name;
     private String email;
     private String introduce;
-    private String user_status = "정상";
+    private String user_status = "미인증";
     private String refreshToken;
     private Timestamp created;
     private Timestamp updated;

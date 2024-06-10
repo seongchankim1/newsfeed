@@ -11,6 +11,9 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 
+
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -79,4 +82,7 @@ public class Newsfeed{
 	public void likeUpdated() {
 		this.likeUpdated = LocalDateTime.now();
 	}
+
+	@OneToMany(mappedBy = "newsfeed", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<Comment> comment;
 }

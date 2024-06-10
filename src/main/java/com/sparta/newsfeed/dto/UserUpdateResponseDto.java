@@ -15,7 +15,6 @@ public class UserUpdateResponseDto {
     private String nickname;
     private String email;
     private String introduce;
-    private String password;
     // private LocalDateTime modfiledData;
 
 
@@ -23,7 +22,6 @@ public class UserUpdateResponseDto {
 
         this.nickname = user.getNickname();
         this.email = user.getEmail();
-        this.password = user.getPassword();
         this.introduce = user.getIntroduce();
         //this.modfiledData = user.getLastModifiedDateTime();
     }
