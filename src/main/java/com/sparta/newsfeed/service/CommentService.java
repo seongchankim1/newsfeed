@@ -41,7 +41,7 @@ public class CommentService {
         String newAccessToken = jwtUtil.refreshToken(token, response);
         String newBearerAccessToken = jwtUtil.substringToken(newAccessToken);
         String username = jwtUtil.getUserInfoFromToken(newBearerAccessToken).getSubject();
-        token = jwtUtil.substringToken(token);
+//        token = jwtUtil.substringToken(token);
         Newsfeed newsfeed = newsfeedRepository.findById(id).orElseThrow(()
                 -> new RuntimeException("입력하신 뉴스피드가 존재하지 않습니다."));
 
@@ -71,7 +71,6 @@ public class CommentService {
         if (!comment.getUsername().equals(username)) {
             throw new IllegalArgumentException("자신의 댓글만 삭제할 수 있습니다.");
         }
-
         comment.update(requestDto, newsfeed);
         return new CommentResponse(comment);
 
