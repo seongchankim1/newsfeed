@@ -5,6 +5,8 @@ import com.sparta.newsfeed.entity.User;
 import com.sparta.newsfeed.jwt.JwtUtil;
 import com.sparta.newsfeed.repository.UserRepository;
 
+import jakarta.mail.MessagingException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,22 +17,23 @@ import java.util.Optional;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-// @RequiredArgsConstructor
+ //@RequiredArgsConstructor
 @Service
-
 public class UserService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtUtil jwtUtil;
+	private final EmailService emailService;
 
-	public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+	public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, EmailService emailService) {
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.jwtUtil = jwtUtil;
+		this.emailService = emailService;
 	}
 
 	@Transactional
-	public UserResponseDto signup(SignupRequestDto requestDto) {
+	public UserResponseDto signup(SignupRequestDto requestDto) throws MessagingException {
 
 		User user = new User();
 		user.setUsername(requestDto.getUsername());
@@ -44,16 +47,17 @@ public class UserService {
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		String authKey = authKeyBuilder();
 		user.setAuthKey(authKey);
-		// 여기에 authKey 를 이메일로 발송하는 메서드 추가
+		emailService.sendVerificationEmail(user.getEmail(), authKey); // 이메일 발송 메서드 호출
 		user.setVerifyTime(LocalDateTime.now().plusMinutes(3));
 
 		userRepository.findByUsername(user.getUsername())
-			.ifPresent(existingUser -> {
-				throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
-			});
+				.ifPresent(existingUser -> {
+					throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
+				});
 		userRepository.save(user);
 		return new UserResponseDto(user);
 	}
+
 
 	// 로그인
 	public String login(LoginRequestDto requestDto, HttpServletResponse response) {
@@ -140,6 +144,8 @@ public class UserService {
 		return new UserUpdateResponseDto(user);
 	}
 
+
+	//authKey 생성
 	public String authKeyBuilder() {
 		StringBuilder stringBuilder = new StringBuilder();
 		// 6자리 숫자 코드
@@ -154,6 +160,8 @@ public class UserService {
 		System.out.println(authKey);
 		return authKey;
 	}
+
+	//이메일 인증 시간 제한
 	@Transactional
 	public String verifyMail(VerifyRequestDto requestDto) {
 		User user = userRepository.findByUsername(requestDto.getUsername()).orElseThrow(() -> new IllegalArgumentException("일치하는 아이디가 없습니다."));

@@ -23,7 +23,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
-@RequestMapping("/api/newsfeeds")
+@RequestMapping("/api/newsfeed")
 public class NewsfeedController {
 
 	private final NewsfeedService newsfeedService;
@@ -52,8 +52,8 @@ public class NewsfeedController {
 	}
 
 	// 뉴스피드 전체 조회 (R)
-	@GetMapping("/all")
-	public List<NewsfeedResponseDto> getAllNewsfeeds() {
+	@GetMapping
+	public List<NewsfeedResponseDto> getAllNewsfeed() {
 		return newsfeedService.getAllNewsfeeds();
 	}
 
