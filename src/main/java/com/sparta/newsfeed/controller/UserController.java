@@ -46,6 +46,12 @@ public class UserController {
     //     return ResponseEntity.ok(userService.login(requestDto, response));
     // }
 
+	// 로그아웃
+	@PostMapping("/logout")
+	public void logout(HttpServletRequest request) {
+		userService.logout(request);
+	}
+
 	// 유저 조회
 	@GetMapping("/{username}/profile") //조회기능 구현위치
 	public ResponseEntity<UserResponseDto> getProfiles(
@@ -54,7 +60,8 @@ public class UserController {
 	}
 
 	// 유저 수정
-	@PutMapping("/profile")//수정기능 구현위치
+	// @PutMapping("/profile")//수정기능 구현위치
+	@PutMapping("/{username}/profile")//수정기능 구현위치
 	public ResponseEntity<UserUpdateResponseDto> updateProfiles(
 			@RequestBody UserUpdateRequestDto requestDto, HttpServletResponse response, HttpServletRequest request) {
 		return ResponseEntity.ok().body(userService.profileUpdate(requestDto, response, request));

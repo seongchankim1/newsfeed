@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class UserUpdateResponseDto {
+
+    private String name;
     private String nickname;
     private String email;
     private String introduce;

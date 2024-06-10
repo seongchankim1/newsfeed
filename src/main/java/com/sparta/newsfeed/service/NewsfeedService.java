@@ -81,7 +81,6 @@ public class NewsfeedService {
         }
         // 유저 조회
         User user = userRepository.findById(newsfeed.getUser().getId()).orElseThrow(()-> new IllegalArgumentException("아이디를 찾을 수 없습니다."));
-        newsfeed.updateUpdateDate();
         newsfeed.update(requestDto, user);
         return new NewsfeedResponseDto(newsfeed);
     }

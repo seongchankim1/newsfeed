@@ -20,10 +20,16 @@ public abstract class Timestamped {
 	@Column(updatable = false)
 	private LocalDateTime writeDate;    // 생성일자
 
+	@Column(updatable = false)
+	private LocalDateTime likeCreated;  // 좋아요 생성일자
+
 	@LastModifiedDate
 	@Column
 	private LocalDateTime updateDate;    // 수정일자
 
+	private LocalDateTime status_changed;    // 상태변경시간
+
+	private LocalDateTime likeUpdated;   // 좋아요 수정일자
 	public void updateProfileChanged() {
 		this.updateDate = LocalDateTime.now();
 	}

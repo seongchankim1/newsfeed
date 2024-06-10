@@ -16,13 +16,13 @@ public class CommentResponse {
         this.id = id;
         this.title = title;
         this.comment = comment;
-        this.good_counting = good_counting;
     }
 
     public CommentResponse(Comment comment) {
         this.id = comment.getId();
         this.title = comment.getNewsfeed().getTitle();
         this.comment = comment.getComment();
+        this.good_counting = comment.getGood_counting();
     }
 
     public static CommentResponse toDto(Comment comment) {

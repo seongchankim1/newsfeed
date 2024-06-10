@@ -6,6 +6,11 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
+import java.time.LocalDateTime;
+
 
 import java.util.List;
 
@@ -14,8 +19,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @Table
-public class Newsfeed extends Timestamped {
-
+public class Newsfeed{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -29,8 +33,10 @@ public class Newsfeed extends Timestamped {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
+
 	@Column
 	private String username;
+
 	@Column
 	private int likes;
 
@@ -45,6 +51,36 @@ public class Newsfeed extends Timestamped {
 		this.title = requestDto.getTitle();
 		this.content = requestDto.getContent();
 		this.username = user.getUsername();
+		feedUpdated();
+	}
+
+	@CreatedDate
+	@Column(updatable = false, nullable = false)
+	private LocalDateTime writeDate = LocalDateTime.now();
+
+	@LastModifiedDate
+	@Column
+	private LocalDateTime updateDate;
+
+	@CreatedDate
+	@Column
+	private LocalDateTime likeCreated;
+
+	@LastModifiedDate
+	@Column
+	private LocalDateTime  likeUpdated;
+
+
+	public void feedUpdated(){
+		this.updateDate = LocalDateTime.now();
+	}
+
+	public void likeCreated(){
+		this.likeCreated = LocalDateTime.now();
+	}
+
+	public void likeUpdated() {
+		this.likeUpdated = LocalDateTime.now();
 	}
 
 	@OneToMany(mappedBy = "newsfeed", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

@@ -39,6 +39,7 @@ public class UserService {
 		User user = new User();
 		user.setUsername(requestDto.getUsername());
 		user.setPassword(requestDto.getPassword());
+		user.setName(requestDto.getName());
 		user.setNickname(requestDto.getNickname());
 		user.setEmail(requestDto.getEmail());
 		user.setIntroduce(requestDto.getIntroduce());
@@ -67,23 +68,47 @@ public class UserService {
 		Optional<User> userOptional = userRepository.findByUsername(username);
 		if (userOptional.isPresent()) {
 			User user = userOptional.get();
+
+			System.out.println("User Status: " + user.getUser_status());
+
+			if("탈퇴".equals(user.getUser_status())) {
+				throw new IllegalArgumentException("탈퇴한 사용자입니다.");
+			}
 			if (!passwordEncoder.matches(password, user.getPassword())) {
 				throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
 			}
-			if (user.getUser_status().equals("미인증")) {
+			if ("미인증".equals(user.getUser_status())) {
 				throw new IllegalArgumentException("이메일 인증을 먼저 해주세요.");
 			}
-			if (user.getUser_status().equals("탈퇴")) {
-				throw new IllegalArgumentException("이미 탈퇴한 사용자입니다.");
-			}
-			String accessToken = jwtUtil.createAccessToken(username); // 액세스 토큰 생성
+			String accessToken = jwtUtil.createAccessToken(username);
+			user.setAccessToken(accessToken);// 액세스 토큰 생성
 			response.addHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
+
 			String refreshToken = jwtUtil.createRefreshToken(username); // 리프레시 토큰 생성
 			user.setRefreshToken(refreshToken);
 			userRepository.save(user);
 			return "로그인 성공! 토큰 : " + refreshToken;
 		} else {
 			throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
+		}
+
+	}
+
+	// 로그아웃
+	public String logout(HttpServletRequest request) {
+		String token = request.getHeader(JwtUtil.AUTHORIZATION_HEADER);
+		if(token != null && token.startsWith(JwtUtil.BEARER_PREFIX)) {
+			token = jwtUtil.substringToken(token);
+			String username = jwtUtil.getUserInfoFromToken(token).getSubject();
+			User user = userRepository.findByUsername(username).orElseThrow(
+					() -> new IllegalArgumentException("등록된 사용자가 없습니다.")
+			);
+			user.setRefreshToken(null);
+			user.setAccessToken(null);
+			userRepository.save(user);
+			return "로그아웃 성공! 토큰이 초기화되었습니다.";
+		} else {
+			throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
 		}
 	}
 
@@ -103,6 +128,9 @@ public class UserService {
 		String password = requestDto.getPassword();
 		if (!passwordEncoder.matches(password, user.getPassword())) {
 			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+		} else {
+			user.setRefreshToken(null);
+			user.setAccessToken(null);
 		}
 
 		user.updateStatus("탈퇴"); // 사용자 상태 업데이트
