@@ -46,18 +46,21 @@ public class UserController {
 		return ResponseEntity.ok(userService.login(requestDto, response));
 	}
 
+	// 유저 조회
 	@GetMapping("/{username}/profile") //조회기능 구현위치
 	public ResponseEntity<UserResponseDto> getProfiles(
 			@PathVariable String username) {
 		return ResponseEntity.ok().body(userService.findUser(username));
 	}
 
+	// 유저 수정
 	@PutMapping("/profile")//수정기능 구현위치
 	public ResponseEntity<UserUpdateResponseDto> updateProfiles(
 			@RequestBody UserUpdateRequestDto requestDto, HttpServletResponse response, HttpServletRequest request) {
 		return ResponseEntity.ok().body(userService.profileUpdate(requestDto, response, request));
 	}
 
+	// 이메일 인증
 	@PostMapping("/verify")
 	public String verifyMail(@RequestBody VerifyRequestDto requestDto) {
 		return userService.verifyMail(requestDto);

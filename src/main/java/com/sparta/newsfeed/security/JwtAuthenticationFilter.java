@@ -20,6 +20,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import java.io.IOException;
 import java.util.Map;
 
+// JWT 기반 인증 처리를 위한 필터
 public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
 	private final JwtUtil jwtUtil;
@@ -34,29 +35,40 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 		this.userRepository = userRepository;
 	}
 
+	// 인증 시도
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException {
+		// 요청 본문에서 사용자명과 비밀번호를 읽음
 		Map<String, String> requestBody = objectMapper.readValue(request.getInputStream(), Map.class);
 		String username = requestBody.get("username");
 		String password = requestBody.get("password");
+		// 인증 토큰 생성
 		UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);
+		// AuthenticationManager 통해 인증 시도
 		return getAuthenticationManager().authenticate(authRequest);
 	}
 
+	// 인증 성공 처리
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+		// 사용자명 가져와서 사용자 조회
 		String username = authResult.getName();
 		User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("유저를 찾을 수 없습니다."));
+		// Access, Refresh 토큰 생성
 		String token = jwtUtil.createAccessToken(username);
 		user.setRefreshToken(jwtUtil.createRefreshToken(username));
 		userRepository.save(user);
+		// 응답 헤더에 토큰 추가
 		response.addHeader("Authorization", token);
 		response.getWriter().write("Login Success! Token : " + token);
 	}
 
+	// 인증 실패 처리
 	@Override
 	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+		// 상태 코드 401
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+		// 실패 메시지 출력
 		response.getWriter().write("Login failed");
 	}
 }

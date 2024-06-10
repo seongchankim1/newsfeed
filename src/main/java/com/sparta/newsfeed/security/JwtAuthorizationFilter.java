@@ -21,17 +21,22 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 		this.jwtUtil = jwtUtil;
 	}
 
+	// 필터 실행
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+		// 요청에서 JWT 토큰 추출
 		String token = jwtUtil.resolveToken(request);
 
+		// 토큰 유효성 검사
 		if (token != null && jwtUtil.validateToken(token)) {
+			// 인증 객체 생성 및 설정
 			Authentication authentication = jwtUtil.getAuthentication(token);
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 		} else {
 			System.out.println("토큰이 없습니다. 로그인 해주세요.");
 		}
 
+		// 다음 필터 실행
 		chain.doFilter(request, response);
 	}
 }
