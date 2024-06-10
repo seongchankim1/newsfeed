@@ -24,12 +24,6 @@ public abstract class Timestamped {
 	@Column
 	private LocalDateTime updateDate;    // 수정일자
 
-	private LocalDateTime status_changed;    // 상태변경시간
-
-	public void updateStatusChanged() {
-		this.status_changed = LocalDateTime.now();
-	}
-
 	public void updateProfileChanged() {
 		this.updateDate = LocalDateTime.now();
 	}

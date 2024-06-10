@@ -62,6 +62,12 @@ public class User extends Timestamped {
 	@Enumerated(value = EnumType.STRING)
 	private UserRoleEnum role = UserRoleEnum.USER;
 
+	private LocalDateTime status_changed;    // 상태변경시간
+
+	public void updateStatusChanged() {
+		this.status_changed = LocalDateTime.now();
+	}
+
 
 	public User(String username, String password , String nickname, String email, String introduce, String user_status, String refreshToken, String authKey, LocalDateTime verifyTime) {
 

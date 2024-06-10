@@ -1,5 +1,7 @@
 package com.sparta.newsfeed.entity;
 
+import java.sql.Time;
+
 import ch.qos.logback.core.net.SMTPAppenderBase;
 import com.sparta.newsfeed.dto.CommentCreateRequest;
 import com.sparta.newsfeed.dto.CommentUpdateRequest;
@@ -15,7 +17,7 @@ import lombok.Setter;
 @Table
 @NoArgsConstructor
 
-public class Comment {
+public class Comment extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -39,6 +41,7 @@ public class Comment {
         this.username = commentCreateRequest.getUsername();
         this.comment = commentCreateRequest.getComment();
         this.newsfeed = newsfeed;
+        this.nickname = commentCreateRequest.getNickname();
     }
 
     public void update(CommentUpdateRequest requestDto, Newsfeed newsfeed) {
