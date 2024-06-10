@@ -48,7 +48,7 @@ public class User{
 	private String introduce;  // 한 줄 소개
 
 	@Column(nullable = false)
-	private String user_status = "정상";     // 회원상태코드
+	private String user_status;     // 회원상태코드
 
 	@Column
 	private String refreshToken;
@@ -70,7 +70,7 @@ public class User{
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Newsfeed> newsfeedList = new ArrayList<>();
 
-	public User(String username, String password , String name, String nickname, String email, String introduce, String user_status, String refreshToken, String accessToken) {
+	public User(String username, String password , String name, String nickname, String email, String introduce, String user_status, String refreshToken, String accessToken) {}
 	@Column
 	private String authKey;
 
@@ -81,14 +81,14 @@ public class User{
 	@Enumerated(value = EnumType.STRING)
 	private UserRoleEnum role = UserRoleEnum.USER;
 
-	private LocalDateTime status_changed;    // 상태변경시간
+//	private LocalDateTime status_changed;    // 상태변경시간
 
-	public void updateStatusChanged() {
-		this.status_changed = LocalDateTime.now();
-	}
+//	public void updateStatusChanged() {
+//		this.status_changed = LocalDateTime.now();
+//	}
 
 
-	public User(String username, String password , String nickname, String email, String introduce, String user_status, String refreshToken, String authKey, LocalDateTime verifyTime) {
+	public User(String username, String password , String name, String nickname, String email, String introduce, String user_status, String refreshToken, String accessToken, String authKey, LocalDateTime verifyTime) {
 
 		this.username = username;
 		this.password = password;

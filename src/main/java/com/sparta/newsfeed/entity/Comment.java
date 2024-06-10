@@ -1,6 +1,7 @@
 package com.sparta.newsfeed.entity;
 
 import java.sql.Time;
+import java.time.LocalDateTime;
 
 import ch.qos.logback.core.net.SMTPAppenderBase;
 import com.sparta.newsfeed.dto.CommentCreateRequest;
@@ -10,6 +11,8 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 @Entity
 @Getter
@@ -32,6 +35,9 @@ public class Comment extends Timestamped {
     @Column(nullable = false)
     private long good_counting;
 
+    @Column
+    private int likes;
+
     @ManyToOne
     @JoinColumn(name = "newsfeed_id", nullable = true)
     private Newsfeed newsfeed;
@@ -46,6 +52,22 @@ public class Comment extends Timestamped {
 
     public void update(CommentUpdateRequest requestDto, Newsfeed newsfeed) {
         this.comment = requestDto.getComment();
+    }
+
+    @CreatedDate
+    @Column
+    private LocalDateTime likeCreated;
+
+    @LastModifiedDate
+    @Column
+    private LocalDateTime  likeUpdated;
+
+    public void likeCreated(){
+        this.likeCreated = LocalDateTime.now();
+    }
+
+    public void likeUpdated() {
+        this.likeUpdated = LocalDateTime.now();
     }
 
 //    public Comment(String comment, String username, Newsfeed newsfeed) {

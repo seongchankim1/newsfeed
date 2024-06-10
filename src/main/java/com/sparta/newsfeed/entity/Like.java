@@ -23,6 +23,10 @@ public class Like{
     @ManyToOne
     @JoinColumn(name = "newsfeed_id", nullable = false)
     private Newsfeed newsfeed;
+
+    @ManyToOne
+    @JoinColumn(name = "comment_id", nullable = false)
+    private Comment comment;
 //    @Column
 //    private Long ContentId;
 //
