@@ -1,6 +1,8 @@
 package com.sparta.newsfeed.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sparta.newsfeed.dto.LoginRequestDto;
+import com.sparta.newsfeed.dto.UserRequestDto;
 import com.sparta.newsfeed.entity.User;
 import com.sparta.newsfeed.jwt.JwtUtil;
 import com.sparta.newsfeed.repository.UserRepository;
@@ -42,6 +44,10 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 		Map<String, String> requestBody = objectMapper.readValue(request.getInputStream(), Map.class);
 		String username = requestBody.get("username");
 		String password = requestBody.get("password");
+		User user = userRepository.findByUsername(username).orElseThrow(()-> new UsernameNotFoundException(username));
+		if (user.getUser_status().equals("미인증")) {
+			throw new IllegalArgumentException("이메일 인증을 먼저 해주세요.");
+		}
 		// 인증 토큰 생성
 		UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);
 		// AuthenticationManager 통해 인증 시도
