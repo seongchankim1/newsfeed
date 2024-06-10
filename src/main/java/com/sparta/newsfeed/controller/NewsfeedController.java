@@ -55,6 +55,7 @@ public class NewsfeedController {
 	@GetMapping
 	public List<NewsfeedResponseDto> getAllNewsfeed() {
 		return newsfeedService.getAllNewsfeeds();
+		return newsfeedService.getAllNewsfeed();
 	}
 
 	// 뉴스피드 수정 (U)

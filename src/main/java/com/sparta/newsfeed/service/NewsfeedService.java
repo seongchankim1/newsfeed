@@ -50,6 +50,7 @@ public class NewsfeedService {
     }
 
     public List<NewsfeedResponseDto> getAllNewsfeeds() {
+    public List<NewsfeedResponseDto> getAllNewsfeed() {
         List<Newsfeed> newsfeedList = newsfeedRepository.findAll();
         return newsfeedList.stream()
                 .map(NewsfeedResponseDto::new)
