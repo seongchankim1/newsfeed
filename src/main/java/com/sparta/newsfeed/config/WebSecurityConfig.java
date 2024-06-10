@@ -39,7 +39,7 @@ public class WebSecurityConfig {
 		http.csrf(csrf -> csrf.disable())
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(authorize -> authorize
-				.requestMatchers("/api/user/signup", "/api/user/login", "/api/user/verify").permitAll()
+				.requestMatchers("/api/user/signup", "/api/user/login", "/api/user/verify", "/swagger-ui/**").permitAll()
 				.anyRequest().authenticated()
 			)
 			.addFilterBefore(new JwtAuthenticationFilter(authenticationManager, jwtUtil, objectMapper, userRepository), UsernamePasswordAuthenticationFilter.class)
