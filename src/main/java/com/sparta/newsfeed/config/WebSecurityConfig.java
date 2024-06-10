@@ -6,6 +6,8 @@ import com.sparta.newsfeed.repository.UserRepository;
 import com.sparta.newsfeed.security.JwtAuthenticationFilter;
 import com.sparta.newsfeed.security.JwtAuthorizationFilter;
 import com.sparta.newsfeed.security.UserDetailsServiceImpl;
+import com.sparta.newsfeed.service.UserService;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,13 +25,15 @@ public class WebSecurityConfig {
 	private final UserDetailsServiceImpl userDetailsService;
 	private final JwtUtil jwtUtil;
 	private final ObjectMapper objectMapper;
+	private final UserService userService;
 	private final UserRepository userRepository;
 
 	// WebSecurityConfig 초기화
-	public WebSecurityConfig(UserDetailsServiceImpl userDetailsService, JwtUtil jwtUtil, ObjectMapper objectMapper, UserRepository userRepository) {
+	public WebSecurityConfig(UserDetailsServiceImpl userDetailsService, JwtUtil jwtUtil, ObjectMapper objectMapper, UserService userService, UserRepository userRepository) {
 		this.userDetailsService = userDetailsService;
 		this.jwtUtil = jwtUtil;
 		this.objectMapper = objectMapper;
+		this.userService = userService;
 		this.userRepository = userRepository;
 	}
 
@@ -47,7 +51,7 @@ public class WebSecurityConfig {
 				.anyRequest().authenticated() // 그 외의 모든 요청은 인증 필요
 			)
 			// JWT 인증 필터 추가
-			.addFilterBefore(new JwtAuthenticationFilter(authenticationManager, jwtUtil, objectMapper, userRepository), UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(new JwtAuthenticationFilter(authenticationManager, jwtUtil, objectMapper, userService, userRepository), UsernamePasswordAuthenticationFilter.class)
 			// JWT 인가 필터 추가
 			.addFilterBefore(new JwtAuthorizationFilter(authenticationManager, jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
