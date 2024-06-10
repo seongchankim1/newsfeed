@@ -1,6 +1,4 @@
 package com.sparta.newsfeed.entity;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.sparta.newsfeed.dto.NewsfeedRequestDto;
 
@@ -11,8 +9,8 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table
 @NoArgsConstructor
+@Table
 public class Newsfeed extends Timestamped {
 
 	@Id
@@ -31,11 +29,14 @@ public class Newsfeed extends Timestamped {
 	private User user;
 	@Column
 	private String username;
+	@Column
+	private int likes;
 
 	public Newsfeed(NewsfeedRequestDto newsfeedRequestDto, User user) {
 		this.title = newsfeedRequestDto.getTitle();
 		this.content = newsfeedRequestDto.getContent();
 		this.username = user.getUsername();
+		this.likes = newsfeedRequestDto.getLike();
 	}
 
 	public void update(NewsfeedRequestDto requestDto, User user) {

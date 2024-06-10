@@ -1,5 +1,7 @@
 package com.sparta.newsfeed.controller;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -9,17 +11,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sparta.newsfeed.dto.NewsfeedResponseDto;
 import com.sparta.newsfeed.dto.NewsfeedRequestDto;
+import com.sparta.newsfeed.dto.PagingRequestDto;
 import com.sparta.newsfeed.service.NewsfeedService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
-@RequestMapping("/api/newsfeeds")
+@RequestMapping("/api/newsfeed")
 public class NewsfeedController {
 
 	private final NewsfeedService newsfeedService;
@@ -36,6 +40,13 @@ public class NewsfeedController {
 		return newsfeedService.createNewsfeed(requestDto, response, request);
 	}
 
+	//뉴스피드 10건씩 페이지별 조회 (R)
+	@GetMapping("/page/{page}")
+	public List<NewsfeedResponseDto> getNewsfeeds(@PathVariable Long page, @RequestBody PagingRequestDto requestDto) {
+		return newsfeedService.getNewsfeeds(page, requestDto);
+	}
+
+
 	// 뉴스피드 단건 조회 (R)
 	@GetMapping("/{id}")
 	public NewsfeedResponseDto selectNewsfeed(@PathVariable Long id) {
@@ -43,8 +54,8 @@ public class NewsfeedController {
 	}
 
 	// 뉴스피드 전체 조회 (R)
-	@GetMapping("/all")
-	public List<NewsfeedResponseDto> getAllNewsfeeds() {
+	@GetMapping
+	public List<NewsfeedResponseDto> getAllNewsfeed() {
 		return newsfeedService.getAllNewsfeeds();
 	}
 

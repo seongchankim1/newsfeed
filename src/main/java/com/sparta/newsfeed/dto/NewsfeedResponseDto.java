@@ -8,6 +8,7 @@ public class NewsfeedResponseDto {
     private Long id;
     private String title;
     private String content;
+    private int likes;
 
     public NewsfeedResponseDto(Long id, String title, String contents) {
         this.id = id;
@@ -20,6 +21,7 @@ public class NewsfeedResponseDto {
         this.id = newsfeed.getId();
         this.title = newsfeed.getTitle();
         this.content = newsfeed.getContent();
+        this.likes = newsfeed.getLikes();
     }
 
         public static NewsfeedResponseDto toDto(Newsfeed newsfeed) {

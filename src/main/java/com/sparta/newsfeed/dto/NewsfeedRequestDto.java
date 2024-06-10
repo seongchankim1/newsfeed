@@ -9,10 +9,12 @@ public class NewsfeedRequestDto {
         private String username;
         private String title;
         private String content;
+        private int like;
 
-        public NewsfeedRequestDto(String username, String title, String content) {
+        public NewsfeedRequestDto(String username,String title, String content, int like) {
                 this.username = username;
                 this.title = title;
                 this.content = content;
+                this.like = like;
         }
 }

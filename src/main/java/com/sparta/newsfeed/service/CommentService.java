@@ -28,7 +28,6 @@ public class CommentService {
         this.jwtUtil = jwtUtil;
     }
 
-
     @Transactional
     public CommentResponse createComment(Long id,
                                          CommentCreateRequest requestDto,
