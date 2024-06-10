@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 
 @Service
+
 public class NewsfeedService {
     private final NewsfeedRepository newsfeedRepository;
     private final JwtUtil jwtUtil;
@@ -52,7 +53,10 @@ public class NewsfeedService {
     }
 
     @Transactional
-    public NewsfeedResponseDto updateNewsfeed(Long id, NewsfeedRequestDto requestDto, HttpServletResponse response, HttpServletRequest request) {
+    public NewsfeedResponseDto updateNewsfeed(Long id,
+                                              NewsfeedRequestDto requestDto,
+                                              HttpServletResponse response,
+                                              HttpServletRequest request) {
         String token = jwtUtil.refreshToken(response, request);
         String username = jwtUtil.getUserInfoFromToken(token).getSubject();
         Newsfeed newsfeed = newsfeedRepository.findById(id).orElseThrow(()->new IllegalArgumentException("아이디를 찾을 수 없습니다."));
