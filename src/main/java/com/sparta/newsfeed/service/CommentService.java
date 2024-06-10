@@ -60,8 +60,7 @@ public class CommentService {
                                          HttpServletRequest request) {
         String token = jwtUtil.resolveToken(request);
         String newAccessToken = jwtUtil.refreshToken(token, response);
-        String newBearerAccessToken = jwtUtil.substringToken(newAccessToken);
-        String username = jwtUtil.getUserInfoFromToken(newBearerAccessToken).getSubject();
+        String username = jwtUtil.getUserInfoFromToken(newAccessToken).getSubject();
 
         Newsfeed newsfeed = newsfeedRepository.findById(newsfeedId).orElseThrow(()
                 -> new IllegalArgumentException("입력하신 뉴스피드가 존재하지 않습니다."));

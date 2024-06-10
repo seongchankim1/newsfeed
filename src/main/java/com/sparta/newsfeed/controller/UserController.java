@@ -39,12 +39,12 @@ public class UserController {
 		return ResponseEntity.ok("회원탈퇴 완료!");
 	}
 
-    // 로그인
-    @GetMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
-        // String token = userService.login(requestDto);
-        return ResponseEntity.ok(userService.login(requestDto, response));
-    }
+    // // 로그인은 Security에서 구현
+    // @GetMapping("/login")
+    // public ResponseEntity<String> login(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
+    //     // String token = userService.login(requestDto);
+    //     return ResponseEntity.ok(userService.login(requestDto, response));
+    // }
 
 	// 유저 조회
 	@GetMapping("/{username}/profile") //조회기능 구현위치

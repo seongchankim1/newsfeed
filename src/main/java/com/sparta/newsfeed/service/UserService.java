@@ -62,9 +62,7 @@ public class UserService {
 	}
 
 	// 로그인
-	public String login(LoginRequestDto requestDto, HttpServletResponse response) {
-		String username = requestDto.getUsername();
-		String password = requestDto.getPassword();
+	public String login(String username, String password, HttpServletResponse response) {
 
 		Optional<User> userOptional = userRepository.findByUsername(username);
 		if (userOptional.isPresent()) {
@@ -74,6 +72,9 @@ public class UserService {
 			}
 			if (user.getUser_status().equals("미인증")) {
 				throw new IllegalArgumentException("이메일 인증을 먼저 해주세요.");
+			}
+			if (user.getUser_status().equals("탈퇴")) {
+				throw new IllegalArgumentException("이미 탈퇴한 사용자입니다.");
 			}
 			String accessToken = jwtUtil.createAccessToken(username); // 액세스 토큰 생성
 			response.addHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
