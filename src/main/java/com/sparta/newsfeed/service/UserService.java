@@ -39,6 +39,7 @@ public class UserService {
 		User user = new User();
 		user.setUsername(requestDto.getUsername());
 		user.setPassword(requestDto.getPassword());
+		user.setName(requestDto.getName());
 		user.setNickname(requestDto.getNickname());
 		user.setEmail(requestDto.getEmail());
 		user.setIntroduce(requestDto.getIntroduce());
@@ -78,14 +79,15 @@ public class UserService {
 			if (!passwordEncoder.matches(password, user.getPassword())) {
 				throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
 			}
-//			if ("미인증".equals(user.getUser_status())) {
-//				throw new IllegalArgumentException("이메일 인증을 먼저 해주세요.");
-//			}
-			String accessToken = jwtUtil.createAccessToken(username); // 액세스 토큰 생성
+			if ("미인증".equals(user.getUser_status())) {
+				throw new IllegalArgumentException("이메일 인증을 먼저 해주세요.");
+			}
+			String accessToken = jwtUtil.createAccessToken(username);
+			user.setAccessToken(accessToken);// 액세스 토큰 생성
 			response.addHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
+
 			String refreshToken = jwtUtil.createRefreshToken(username); // 리프레시 토큰 생성
 			user.setRefreshToken(refreshToken);
-			user.setAccessToken(accessToken);
 			userRepository.save(user);
 			return "로그인 성공! 토큰 : " + refreshToken;
 		} else {

@@ -45,7 +45,7 @@ public class CommentService {
         Newsfeed newsfeed = newsfeedRepository.findById(id).orElseThrow(()
                 -> new RuntimeException("입력하신 뉴스피드가 존재하지 않습니다."));
 
-        Comment comment = new Comment(requestDto, newsfeed);
+        Comment comment = new Comment(requestDto, newsfeed, username);
         comment.setNewsfeed(newsfeed);
         Comment saveComment = commentRepository.save(comment);
         System.out.println(id + "번 뉴스피드에 댓글이 등록되었습니다.");

@@ -7,6 +7,7 @@ import ch.qos.logback.core.net.SMTPAppenderBase;
 import com.sparta.newsfeed.dto.CommentCreateRequest;
 import com.sparta.newsfeed.dto.CommentUpdateRequest;
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,8 +20,9 @@ import org.springframework.data.annotation.LastModifiedDate;
 @Setter
 @Table
 @NoArgsConstructor
+@Transactional
 
-public class Comment extends Timestamped {
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,19 +37,18 @@ public class Comment extends Timestamped {
     @Column(nullable = false)
     private long good_counting;
 
-    @Column
-    private int likes;
 
     @ManyToOne
     @JoinColumn(name = "newsfeed_id", nullable = true)
     private Newsfeed newsfeed;
 
 
-    public Comment(CommentCreateRequest commentCreateRequest, Newsfeed newsfeed) {
-        this.username = commentCreateRequest.getUsername();
+    public Comment(CommentCreateRequest commentCreateRequest, Newsfeed newsfeed, String username) {
+        this.username = username;
         this.comment = commentCreateRequest.getComment();
         this.newsfeed = newsfeed;
         this.nickname = commentCreateRequest.getNickname();
+        this.good_counting = 0;
     }
 
     public void update(CommentUpdateRequest requestDto, Newsfeed newsfeed) {
@@ -56,11 +57,13 @@ public class Comment extends Timestamped {
 
     @CreatedDate
     @Column
+    private LocalDateTime writeDate = LocalDateTime.now();
     private LocalDateTime likeCreated;
 
     @LastModifiedDate
     @Column
-    private LocalDateTime  likeUpdated;
+    private LocalDateTime likeUpdated;
+    private LocalDateTime updateDate;
 
     public void likeCreated(){
         this.likeCreated = LocalDateTime.now();
@@ -70,6 +73,10 @@ public class Comment extends Timestamped {
         this.likeUpdated = LocalDateTime.now();
     }
 
+    public void updateUpdateDate() {
+        this.updateDate = LocalDateTime.now();
+    }
+
 //    public Comment(String comment, String username, Newsfeed newsfeed) {
 //        this.comment = comment;
 //        this.nickname = username;
@@ -77,29 +84,6 @@ public class Comment extends Timestamped {
 
 //    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //    public Comment(Newsfeed newsfeed, String comment, String nickname, String username,
 //                   long good_counting, long id, long newfeesId) {
 //        this.newsfeed = newsfeed;

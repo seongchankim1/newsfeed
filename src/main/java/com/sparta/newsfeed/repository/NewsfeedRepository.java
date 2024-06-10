@@ -17,7 +17,7 @@ public interface NewsfeedRepository extends JpaRepository<Newsfeed, Long> {
 	@Override
 	Optional <Newsfeed> findById(Long aLong);
 
-	Newsfeed findByUsername(String username);
+	Optional <Newsfeed> findByUsername(String username);
 
 	List<Newsfeed> findAllByWriteDateBetween(LocalDateTime startDate, LocalDateTime endDate);
 
