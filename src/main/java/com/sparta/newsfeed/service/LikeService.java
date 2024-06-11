@@ -53,12 +53,12 @@ public class LikeService {
             Like like = new Like();
             like.setUser(user);
             like.setNewsfeed(newsfeed);
+            like.setComment(null);
             newsfeed.likeCreated();
             newsfeed.likeUpdated();
             likeRepository.save(like);
             newsfeed.setLikes(newsfeed.getLikes() + 1);
         }
-
 
         Newsfeed savedNewsfeed = newsfeedRepository.save(newsfeed);
         return new NewsfeedResponseDto(savedNewsfeed);
