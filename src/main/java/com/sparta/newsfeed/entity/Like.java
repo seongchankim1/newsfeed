@@ -25,7 +25,7 @@ public class Like{
     private Newsfeed newsfeed;
 
     @ManyToOne
-    @JoinColumn(name = "comment_id", nullable = false)
+    @JoinColumn(name = "comment_id")
     private Comment comment;
 //    @Column
 //    private Long ContentId;
